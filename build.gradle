@@ -18,6 +18,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.7.9'
 
+    compile group: 'com.squareup.okhttp', name: 'okhttp', version: '2.7.5'
     compile('com.amazon.alexa:alexa-skills-kit:1.2') {
         exclude group: 'joda-time'
     }

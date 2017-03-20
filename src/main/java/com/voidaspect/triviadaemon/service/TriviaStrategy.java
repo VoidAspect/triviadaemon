@@ -11,7 +11,7 @@ import static java.util.Collections.unmodifiableSet;
 /**
  * @author mikhail.h
  */
-public final class TriviaService {
+public final class TriviaStrategy {
 
     public TriviaIntent getIntentByName(String name) {
         return Arrays.stream(TriviaIntent.values())
