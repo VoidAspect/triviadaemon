@@ -1,12 +1,12 @@
 package com.voidaspect.triviadaemon.service;
 
-import lombok.Getter;
-
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.singleton;
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * @author mikhail.h
@@ -20,33 +20,39 @@ public final class TriviaService {
                 .orElse(TriviaIntent.HELP);
     }
 
-    enum TriviaIntent implements Function<TriviaRequest, TriviaResponse> {
+    public enum TriviaIntent implements Function<TriviaRequest, TriviaResponse> {
 
-        HELP("AMAZON.HelpIntent"),
+        HELP("AMAZON.HelpIntent", request -> null),
 
-        STOP(names("Amazon.StopIntent", "stop")),
+        STOP(names("AMAZON.StopIntent", "stop"), request -> null),
 
-        QUESTION("QuestionIntent");
+        CANCEL("AMAZON.CancelIntent", STOP.function),
+
+        QUESTION(names("QuestionIntent", "question.request"), request -> null);
 
         private final Set<String> names;
 
-        TriviaIntent(String name) {
-            this.names = Collections.singleton(name);
+        private final Function<TriviaRequest, TriviaResponse> function;
+
+        TriviaIntent(String name, Function<TriviaRequest, TriviaResponse> function) {
+            this.names = unmodifiableSet(singleton(name));
+            this.function = function;
         }
 
-        TriviaIntent(Set<String> names) {
+        TriviaIntent(Set<String> names, Function<TriviaRequest, TriviaResponse> function) {
             this.names = names;
+            this.function = function;
         }
 
         @Override
         public TriviaResponse apply(TriviaRequest request) {
-            throw new UnsupportedOperationException("Not yet implemented");
+            return function.apply(request);
         }
 
         private static Set<String> names(String... names) {
-            return Arrays.stream(names)
+            return unmodifiableSet(Arrays.stream(names)
                     .distinct()
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toSet()));
         }
 
     }
