@@ -1,5 +1,6 @@
 package com.voidaspect.triviadaemon.service;
 
+import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
 
@@ -9,6 +10,7 @@ import java.util.Optional;
  * @author mikhail.h
  */
 @Value
+@Builder
 public final class TriviaResponse {
 
     @NonNull
@@ -18,6 +20,10 @@ public final class TriviaResponse {
 
     @NonNull
     String speech;
+
+    String correctAnswer;
+
+    boolean isFinal;
 
     public String getText() {
         return Optional.ofNullable(text).orElse(speech);

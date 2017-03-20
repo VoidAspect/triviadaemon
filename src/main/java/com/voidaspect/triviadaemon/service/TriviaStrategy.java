@@ -1,10 +1,15 @@
 package com.voidaspect.triviadaemon.service;
 
+import lombok.val;
+
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.voidaspect.triviadaemon.service.TriviaRequestContext.ContextParam.CORRECT_ANSWER;
+import static com.voidaspect.triviadaemon.service.TriviaRequestContext.ContextParam.QUESTION_SPEECH;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableSet;
 
@@ -28,7 +33,18 @@ public final class TriviaStrategy {
 
         CANCEL("AMAZON.CancelIntent", STOP.function),
 
-        QUESTION(names("QuestionIntent", "question.request"), request -> null);
+        QUESTION(names("QuestionIntent", "question.request"), new QuestionService()),
+
+        ANSWER(names("AnswerIntent", "question.answer"), request ->
+                TriviaResponse.builder()
+                    .isFinal(false)
+                    .title("")
+                    .speech(Optional.ofNullable(request
+                            .getRequestContext()
+                            .getContextParams()
+                            .get(CORRECT_ANSWER))
+                            .orElse(""))
+                    .build());
 
         private final Set<String> names;
 
