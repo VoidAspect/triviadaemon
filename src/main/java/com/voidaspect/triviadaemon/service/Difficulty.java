@@ -1,10 +1,21 @@
 package com.voidaspect.triviadaemon.service;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 /**
  * @author mikhail.h
  */
-public enum  Difficulty {
+@RequiredArgsConstructor
+@Getter
+public enum Difficulty {
 
-    EASY, MEDIUM, HARD;
+    EASY("easy"),
+
+    MEDIUM("medium"),
+
+    HARD("hard");
+
+    private final String name;
 
 }
