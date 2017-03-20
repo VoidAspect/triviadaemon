@@ -1,0 +1,11 @@
+##Ignore
+
+# IntelliJ
+/out/
+.idea/
+
+# Gradle:
+.gradle
+build/
+gradle/
+gradlew*
