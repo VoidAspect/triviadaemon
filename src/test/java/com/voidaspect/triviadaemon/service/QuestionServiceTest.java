@@ -28,8 +28,12 @@ public class QuestionServiceTest {
         log.debug("{}", triviaResponse);
 
         assertEquals("Trivia: New Question", triviaResponse.getTitle());
+        assertTrue(triviaResponse.isQuestion());
+        assertFalse(triviaResponse.isTerminal());
         assertNotNull(triviaResponse.getText());
         assertNotNull(triviaResponse.getSpeech());
+        assertTrue(triviaResponse.getText().contains("difficulty: medium, type: True or False"));
+        assertTrue(triviaResponse.getCorrectAnswer().startsWith("Correct answer is "));
 
     }
 

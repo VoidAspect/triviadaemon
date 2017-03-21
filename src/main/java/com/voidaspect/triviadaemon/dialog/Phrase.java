@@ -27,6 +27,8 @@ public enum Phrase {
 
     NO_QUESTION("Sorry, I don't remember last question."),
 
+    TRUE_OR_FALSE("Is this true or false?"),
+
     /**
      * Goodbye message.
      */

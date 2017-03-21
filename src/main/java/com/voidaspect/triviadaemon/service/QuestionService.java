@@ -105,22 +105,7 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
             val results = responseWrapper.getResults();
             if (results != null && results.length > 0) {
                 val result = results[0];
-                val questionType = QuestionType.getByName(result.getType());
-                val params = new Object[]{
-                        result.getCategory(),
-                        result.getDifficulty(),
-                        questionType.getDescription()
-                };
-                val speech = decodeResult(result.getQuestion());
-                val text = decodeResult(INFO_FORMAT.format(params)) + '\n' + speech;
-                val correctAnswer = convertAnswerDescription(
-                        decodeResult(result.getCorrectAnswer()),
-                        questionType);
-                responseBuilder
-                        .title(ASKTitle.NEW_QUESTION.get())
-                        .speech(speech)
-                        .text(text)
-                        .correctAnswer(correctAnswer);
+                buildResponse(responseBuilder, result);
             }
         } catch (IOException e) {
             log.error("IOException during Trivia request: ", e);
@@ -130,15 +115,36 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
         return triviaResponse;
     }
 
-    private String convertAnswerDescription(String answer, QuestionType type) {
-        final String result;
-        if (type == QuestionType.BOOLEAN) {
-            result = answer.equalsIgnoreCase("true")
-                    ? "YES" : "NO";
+    private void buildResponse(TriviaResponse.TriviaResponseBuilder responseBuilder,
+                               Question result) throws UnsupportedEncodingException {
+        val questionType = QuestionType.getByName(result.getType());
+
+        val question = decodeResult(result.getQuestion());
+        val answer = decodeResult(result.getCorrectAnswer());
+        final String speech;
+        final String answerText;
+        if (questionType == QuestionType.BOOLEAN) {
+            answerText = Boolean.parseBoolean(answer) ? "YES" : "NO";
+            speech = question + ' ' + Phrase.TRUE_OR_FALSE.get();
         } else {
-            result = answer;
+            answerText = answer;
+            speech = question;
         }
-        return ANSWER_FORMAT.format(new Object[] {result});
+        val correctAnswer = ANSWER_FORMAT.format(new Object[]{answerText});
+
+        val params = new Object[]{
+                result.getCategory(),
+                result.getDifficulty(),
+                questionType.getDescription()
+        };
+        val text = decodeResult(INFO_FORMAT.format(params)) + '\n' + speech;
+
+        //Populate response builder with data
+        responseBuilder
+                .title(ASKTitle.NEW_QUESTION.get())
+                .speech(speech)
+                .text(text)
+                .correctAnswer(correctAnswer);
     }
 
     private String decodeResult(String string) throws UnsupportedEncodingException {
