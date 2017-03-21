@@ -24,7 +24,9 @@ public final class SpeechletResponseFactory {
      * @param cardTitle the title of the UI card.
      * @return SpeechletResponse the speechlet response
      */
-    public SpeechletResponse newAskResponse(Phrase output, Phrase reprompt, ASKTitle cardTitle) {
+    public SpeechletResponse newAskResponse(Phrase output,
+                                            Phrase reprompt,
+                                            ASKTitle cardTitle) {
         return newAskResponse(output.get(), reprompt.get(), cardTitle);
     }
 
@@ -37,7 +39,9 @@ public final class SpeechletResponseFactory {
      * @param cardTitle    the title of the UI card.
      * @return SpeechletResponse the speechlet response
      */
-    public SpeechletResponse newAskResponse(String stringOutput, String repromptText, ASKTitle cardTitle) {
+    public SpeechletResponse newAskResponse(String stringOutput,
+                                            String repromptText,
+                                            ASKTitle cardTitle) {
         return newAskResponse(stringOutput, repromptText, stringOutput, cardTitle);
     }
 
@@ -58,6 +62,16 @@ public final class SpeechletResponseFactory {
         return newAskResponse(stringOutput, repromptText, cardContent, cardTitle.get());
     }
 
+    /**
+     * Method for creating the Ask response. The OutputSpeech and {@link Reprompt} objects are
+     * created from the input strings.
+     *
+     * @param stringOutput the output to be spoken
+     * @param repromptText the reprompt for if the user doesn't reply or is misunderstood.
+     * @param cardContent  the content of the UI card.
+     * @param cardTitle    the title of the UI card.
+     * @return SpeechletResponse the speechlet response
+     */
     public SpeechletResponse newAskResponse(String stringOutput,
                                             String repromptText,
                                             String cardContent,
@@ -88,7 +102,9 @@ public final class SpeechletResponseFactory {
      * @param text      the textual content of the UI card.
      * @return SpeechletResponse the speechlet response
      */
-    public SpeechletResponse newTellResponse(String speech, String text, String cardTitle) {
+    public SpeechletResponse newTellResponse(String speech,
+                                             String text,
+                                             String cardTitle) {
         val outputSpeech = new PlainTextOutputSpeech();
         outputSpeech.setText(speech);
 
