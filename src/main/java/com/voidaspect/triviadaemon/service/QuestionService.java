@@ -38,7 +38,7 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
     private static final String REQUEST_ENCODING = "url3986";
 
     private static final Format INFO_FORMAT =
-            new MessageFormat("Category: {0}, difficulty: {1}, type: {2}");
+            new MessageFormat("Category: {0}, difficulty: {1}, type: {2}.");
 
     private static final Format ANSWER_FORMAT =
             new MessageFormat("Correct answer is {0}.");
@@ -86,6 +86,7 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
                 .get()
                 .build();
 
+        /* Response builder is populated by default by error messages */
         val responseBuilder = TriviaResponse.builder()
                 .isTerminal(false)
                 .isQuestion(true)
@@ -105,7 +106,34 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
             val results = responseWrapper.getResults();
             if (results != null && results.length > 0) {
                 val result = results[0];
-                buildResponse(responseBuilder, result);
+                val questionType = QuestionType.getByName(result.getType());
+
+                val question = decodeResult(result.getQuestion()).trim();
+                val answer = decodeResult(result.getCorrectAnswer()).trim();
+                final String speech;
+                final String answerText;
+                if (questionType == QuestionType.BOOLEAN) {
+                    answerText = answer.toLowerCase();
+                    speech = question + ' ' + Phrase.TRUE_OR_FALSE.get();
+                } else {
+                    answerText = answer;
+                    speech = question;
+                }
+                val correctAnswer = ANSWER_FORMAT.format(new Object[]{answerText});
+
+                val params = new Object[]{
+                        result.getCategory(),
+                        result.getDifficulty(),
+                        questionType.getDescription()
+                };
+                val text = decodeResult(INFO_FORMAT.format(params)) + '\n' + speech;
+
+                //Populate response builder with data
+                responseBuilder
+                        .title(ASKTitle.NEW_QUESTION.get())
+                        .speech(speech)
+                        .text(text)
+                        .correctAnswer(correctAnswer);
             }
         } catch (IOException e) {
             log.error("IOException during Trivia request: ", e);
@@ -113,38 +141,6 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
             triviaResponse = responseBuilder.build();
         }
         return triviaResponse;
-    }
-
-    private void buildResponse(TriviaResponse.TriviaResponseBuilder responseBuilder,
-                               Question result) throws UnsupportedEncodingException {
-        val questionType = QuestionType.getByName(result.getType());
-
-        val question = decodeResult(result.getQuestion());
-        val answer = decodeResult(result.getCorrectAnswer());
-        final String speech;
-        final String answerText;
-        if (questionType == QuestionType.BOOLEAN) {
-            answerText = Boolean.parseBoolean(answer) ? "YES" : "NO";
-            speech = question + ' ' + Phrase.TRUE_OR_FALSE.get();
-        } else {
-            answerText = answer;
-            speech = question;
-        }
-        val correctAnswer = ANSWER_FORMAT.format(new Object[]{answerText});
-
-        val params = new Object[]{
-                result.getCategory(),
-                result.getDifficulty(),
-                questionType.getDescription()
-        };
-        val text = decodeResult(INFO_FORMAT.format(params)) + '\n' + speech;
-
-        //Populate response builder with data
-        responseBuilder
-                .title(ASKTitle.NEW_QUESTION.get())
-                .speech(speech)
-                .text(text)
-                .correctAnswer(correctAnswer);
     }
 
     private String decodeResult(String string) throws UnsupportedEncodingException {
