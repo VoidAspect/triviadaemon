@@ -23,7 +23,9 @@ public final class TriviaResponse {
 
     String correctAnswer;
 
-    boolean isFinal;
+    boolean isTerminal;
+
+    boolean isQuestion;
 
     public String getText() {
         return Optional.ofNullable(text).orElse(speech);

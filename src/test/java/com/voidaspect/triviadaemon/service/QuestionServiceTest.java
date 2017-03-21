@@ -20,6 +20,7 @@ public class QuestionServiceTest {
         val request = TriviaRequest.builder()
                 .difficulty(Difficulty.MEDIUM)
                 .type(QuestionType.BOOLEAN)
+                .requestContext(new TriviaRequestContext())
                 .build();
 
         val triviaResponse = questionService.apply(request);

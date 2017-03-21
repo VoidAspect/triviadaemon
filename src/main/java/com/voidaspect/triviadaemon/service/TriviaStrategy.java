@@ -30,14 +30,16 @@ public final class TriviaStrategy {
 
         HELP("AMAZON.HelpIntent", request ->
                 TriviaResponse.builder()
-                        .isFinal(true)
+                        .isTerminal(true)
+                        .isQuestion(false)
                         .title(ASKTitle.HELP.get())
                         .speech(HELP_MESSAGE.get())
                         .build()),
 
         STOP(names("AMAZON.StopIntent", "stop"), request ->
                 TriviaResponse.builder()
-                        .isFinal(true)
+                        .isTerminal(true)
+                        .isQuestion(false)
                         .speech(GOODBYE.get())
                         .title(ASKTitle.EXIT.get())
                         .build()),
@@ -48,7 +50,8 @@ public final class TriviaStrategy {
 
         REPEAT(names("AMAZON.RepeatIntent", "question.repeat"), request ->
                 TriviaResponse.builder()
-                        .isFinal(false)
+                        .isTerminal(false)
+                        .isQuestion(false)
                         .speech(getContextParam(request, QUESTION_SPEECH))
                         .text(getContextParam(request, QUESTION_TEXT))
                         .title(ASKTitle.PREVIOUS_QUESTION.get())
@@ -56,7 +59,8 @@ public final class TriviaStrategy {
 
         ANSWER(names("AnswerIntent", "question.answer"), request ->
                 TriviaResponse.builder()
-                        .isFinal(false)
+                        .isTerminal(false)
+                        .isQuestion(false)
                         .title(ASKTitle.CORRECT_ANSWER.get())
                         .speech(getContextParam(request, CORRECT_ANSWER))
                         .build());

@@ -40,6 +40,9 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
     private static final Format INFO_FORMAT =
             new MessageFormat("Category: {0}, difficulty: {1}, type: {2}");
 
+    private static final Format ANSWER_FORMAT =
+            new MessageFormat("Correct answer is {0}.");
+
     private final OkHttpClient httpClient;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -84,7 +87,8 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
                 .build();
 
         val responseBuilder = TriviaResponse.builder()
-                .isFinal(false)
+                .isTerminal(false)
+                .isQuestion(true)
                 .speech(Phrase.SERVICE_ERROR.get())
                 .title(ASKTitle.NO_RESPONSE.get());
 
@@ -94,25 +98,29 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
 
             log.debug("http status: {}", httpResponse.message());
 
-            val responseWrapper = objectMapper.readValue(httpResponse.body().charStream(),
+            val responseWrapper = objectMapper.readValue(
+                    httpResponse.body().byteStream(),
                     HTTPResponseWrapper.class);
 
             val results = responseWrapper.getResults();
             if (results != null && results.length > 0) {
                 val result = results[0];
+                val questionType = QuestionType.getByName(result.getType());
                 val params = new Object[]{
                         result.getCategory(),
                         result.getDifficulty(),
-                        QuestionType.getByName(result.getType())
-                                .getDescription()
+                        questionType.getDescription()
                 };
                 val speech = decodeResult(result.getQuestion());
                 val text = decodeResult(INFO_FORMAT.format(params)) + '\n' + speech;
+                val correctAnswer = convertAnswerDescription(
+                        decodeResult(result.getCorrectAnswer()),
+                        questionType);
                 responseBuilder
                         .title(ASKTitle.NEW_QUESTION.get())
                         .speech(speech)
                         .text(text)
-                        .correctAnswer(decodeResult(result.getCorrectAnswer()));
+                        .correctAnswer(correctAnswer);
             }
         } catch (IOException e) {
             log.error("IOException during Trivia request: ", e);
@@ -120,6 +128,17 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
             triviaResponse = responseBuilder.build();
         }
         return triviaResponse;
+    }
+
+    private String convertAnswerDescription(String answer, QuestionType type) {
+        final String result;
+        if (type == QuestionType.BOOLEAN) {
+            result = answer.equalsIgnoreCase("true")
+                    ? "YES" : "NO";
+        } else {
+            result = answer;
+        }
+        return ANSWER_FORMAT.format(new Object[] {result});
     }
 
     private String decodeResult(String string) throws UnsupportedEncodingException {

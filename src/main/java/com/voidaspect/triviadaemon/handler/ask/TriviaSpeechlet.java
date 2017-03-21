@@ -81,7 +81,7 @@ final class TriviaSpeechlet implements SpeechletV2 {
         val speech = response.getSpeech();
 
         final SpeechletResponse speechletResponse;
-        if (response.isFinal()) {
+        if (response.isTerminal()) {
             speechletResponse = responseFactory.newTellResponse(speech, text, title);
         } else {
             speechletResponse = responseFactory.newAskResponse(
@@ -113,9 +113,11 @@ final class TriviaSpeechlet implements SpeechletV2 {
     }
 
     private void saveResponseInSession(Session session, TriviaResponse response) {
-        session.setAttribute(CORRECT_ANSWER.name(), response.getCorrectAnswer());
-        session.setAttribute(QUESTION_SPEECH.name(), response.getSpeech());
-        session.setAttribute(QUESTION_TEXT.name(), response.getText());
+        if (response.isQuestion()) {
+            session.setAttribute(CORRECT_ANSWER.name(), response.getCorrectAnswer());
+            session.setAttribute(QUESTION_SPEECH.name(), response.getSpeech());
+            session.setAttribute(QUESTION_TEXT.name(), response.getText());
+        }
     }
 
     private Optional<String> getSlotValue(Intent intent, ASKSlot askSlot) {
