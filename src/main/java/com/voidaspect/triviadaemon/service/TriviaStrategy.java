@@ -30,6 +30,14 @@ public final class TriviaStrategy {
 
         QUESTION(names("QuestionIntent", "question.request"), new QuestionService()),
 
+        ANSWER(names("AnswerIntent", "question.answer"), request ->
+                TriviaResponse.builder()
+                        .isTerminal(false)
+                        .isQuestion(false)
+                        .title(ASKTitle.CORRECT_ANSWER.get())
+                        .speech(getContextParam(request, CORRECT_ANSWER))
+                        .build()),
+
         HELP("AMAZON.HelpIntent", request ->
                 TriviaResponse.builder()
                         .isTerminal(true)
@@ -37,16 +45,6 @@ public final class TriviaStrategy {
                         .title(ASKTitle.HELP.get())
                         .speech(HELP_MESSAGE.get())
                         .build()),
-
-        STOP(names("AMAZON.StopIntent", "stop"), request ->
-                TriviaResponse.builder()
-                        .isTerminal(true)
-                        .isQuestion(false)
-                        .speech(GOODBYE.get())
-                        .title(ASKTitle.EXIT.get())
-                        .build()),
-
-        CANCEL("AMAZON.CancelIntent", STOP.function),
 
         REPEAT(names("AMAZON.RepeatIntent", "question.repeat"), request ->
                 TriviaResponse.builder()
@@ -57,13 +55,15 @@ public final class TriviaStrategy {
                         .title(ASKTitle.PREVIOUS_QUESTION.get())
                         .build()),
 
-        ANSWER(names("AnswerIntent", "question.answer"), request ->
+        STOP("AMAZON.StopIntent", request ->
                 TriviaResponse.builder()
-                        .isTerminal(false)
+                .isTerminal(true)
                         .isQuestion(false)
-                        .title(ASKTitle.CORRECT_ANSWER.get())
-                        .speech(getContextParam(request, CORRECT_ANSWER))
-                        .build());
+                        .speech(GOODBYE.get())
+                .title(ASKTitle.EXIT.get())
+                .build()),
+
+        CANCEL("AMAZON.CancelIntent", STOP.function);
 
         private final Set<String> names;
 
