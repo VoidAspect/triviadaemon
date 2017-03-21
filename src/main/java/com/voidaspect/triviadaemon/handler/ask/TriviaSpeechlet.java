@@ -81,13 +81,11 @@ final class TriviaSpeechlet implements SpeechletV2 {
 
         final SpeechletResponse speechletResponse;
         if (response.isTerminal()) {
-            speechletResponse = responseFactory.newTellResponse(speech, text, title);
+            speechletResponse = responseFactory
+                    .newTellResponse(speech, text, title);
         } else {
-            speechletResponse = responseFactory.newAskResponse(
-                    speech,
-                    Phrase.REPROMPT.get(),
-                    text,
-                    title);
+            speechletResponse = responseFactory
+                    .newAskResponse(speech, Phrase.REPROMPT.get(), text, title);
         }
 
         return speechletResponse;
