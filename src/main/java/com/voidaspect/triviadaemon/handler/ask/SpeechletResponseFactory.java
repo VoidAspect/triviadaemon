@@ -13,7 +13,8 @@ import lombok.val;
  *
  * @author mikhail.h
  */
-public final class SpeechletResponseFactory {
+@SuppressWarnings("WeakerAccess")
+final class SpeechletResponseFactory {
 
     /**
      * Method for creating the Ask response. The OutputSpeech and {@link Reprompt} objects are
@@ -24,7 +25,7 @@ public final class SpeechletResponseFactory {
      * @param cardTitle the title of the UI card.
      * @return SpeechletResponse the speechlet response
      */
-    public SpeechletResponse newAskResponse(Phrase output,
+    SpeechletResponse newAskResponse(Phrase output,
                                             Phrase reprompt,
                                             ASKTitle cardTitle) {
         return newAskResponse(output.get(), reprompt.get(), cardTitle);
@@ -39,7 +40,7 @@ public final class SpeechletResponseFactory {
      * @param cardTitle    the title of the UI card.
      * @return SpeechletResponse the speechlet response
      */
-    public SpeechletResponse newAskResponse(String stringOutput,
+    SpeechletResponse newAskResponse(String stringOutput,
                                             String repromptText,
                                             ASKTitle cardTitle) {
         return newAskResponse(stringOutput, repromptText, stringOutput, cardTitle);
@@ -55,7 +56,7 @@ public final class SpeechletResponseFactory {
      * @param cardTitle    the title of the UI card.
      * @return SpeechletResponse the speechlet response
      */
-    public SpeechletResponse newAskResponse(String stringOutput,
+    SpeechletResponse newAskResponse(String stringOutput,
                                             String repromptText,
                                             String cardContent,
                                             ASKTitle cardTitle) {
@@ -72,7 +73,7 @@ public final class SpeechletResponseFactory {
      * @param cardTitle    the title of the UI card.
      * @return SpeechletResponse the speechlet response
      */
-    public SpeechletResponse newAskResponse(String stringOutput,
+    SpeechletResponse newAskResponse(String stringOutput,
                                             String repromptText,
                                             String cardContent,
                                             String cardTitle) {
@@ -102,7 +103,7 @@ public final class SpeechletResponseFactory {
      * @param text      the textual content of the UI card.
      * @return SpeechletResponse the speechlet response
      */
-    public SpeechletResponse newTellResponse(String speech,
+    SpeechletResponse newTellResponse(String speech,
                                              String text,
                                              String cardTitle) {
         val outputSpeech = new PlainTextOutputSpeech();

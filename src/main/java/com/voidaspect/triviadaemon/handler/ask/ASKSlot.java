@@ -1,4 +1,4 @@
-package com.voidaspect.triviadaemon.handler;
+package com.voidaspect.triviadaemon.handler.ask;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 @Getter
-public enum ASKSlot {
+enum ASKSlot {
 
     DIFFICULTY("Difficulty"),
 

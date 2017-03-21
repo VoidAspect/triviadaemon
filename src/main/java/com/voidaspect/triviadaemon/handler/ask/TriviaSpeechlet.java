@@ -6,7 +6,6 @@ import com.amazon.speech.slu.Slot;
 import com.amazon.speech.speechlet.*;
 import com.voidaspect.triviadaemon.dialog.ASKTitle;
 import com.voidaspect.triviadaemon.dialog.Phrase;
-import com.voidaspect.triviadaemon.handler.ASKSlot;
 import com.voidaspect.triviadaemon.service.*;
 import lombok.AccessLevel;
 import lombok.Getter;
