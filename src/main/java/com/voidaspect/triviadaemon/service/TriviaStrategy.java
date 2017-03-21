@@ -28,6 +28,8 @@ public final class TriviaStrategy {
 
     public enum TriviaIntent implements Function<TriviaRequest, TriviaResponse> {
 
+        QUESTION(names("QuestionIntent", "question.request"), new QuestionService()),
+
         HELP("AMAZON.HelpIntent", request ->
                 TriviaResponse.builder()
                         .isTerminal(true)
@@ -45,8 +47,6 @@ public final class TriviaStrategy {
                         .build()),
 
         CANCEL("AMAZON.CancelIntent", STOP.function),
-
-        QUESTION(names("QuestionIntent", "question.request"), new QuestionService()),
 
         REPEAT(names("AMAZON.RepeatIntent", "question.repeat"), request ->
                 TriviaResponse.builder()
