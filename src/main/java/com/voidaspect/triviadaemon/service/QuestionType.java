@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.omg.CORBA.UNKNOWN;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * @author mikhail.h
@@ -15,7 +16,7 @@ public enum QuestionType {
 
     MULTIPLE("multiple", "Multiple choice"),
 
-    BOOLEAN("boolean", "True/False"),
+    BOOLEAN("boolean", "True or False"),
 
     UNKNOWN("unknown", "Unknown");
 
@@ -28,6 +29,13 @@ public enum QuestionType {
                 .filter(questionType -> questionType.name.equals(name))
                 .findAny()
                 .orElse(UNKNOWN);
+    }
+
+    public static Optional<QuestionType> getByDescription(String description) {
+        return Arrays.stream(values())
+                .filter(questionType -> questionType != UNKNOWN &&
+                        questionType.description.equalsIgnoreCase(description))
+                .findAny();
     }
 
 }

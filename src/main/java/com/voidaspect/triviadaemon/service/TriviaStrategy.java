@@ -1,5 +1,6 @@
 package com.voidaspect.triviadaemon.service;
 
+import com.voidaspect.triviadaemon.dialog.ASKTitle;
 import lombok.val;
 
 import java.util.Arrays;
@@ -8,8 +9,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.voidaspect.triviadaemon.service.TriviaRequestContext.ContextParam.CORRECT_ANSWER;
-import static com.voidaspect.triviadaemon.service.TriviaRequestContext.ContextParam.QUESTION_SPEECH;
+import static com.voidaspect.triviadaemon.dialog.Phrase.*;
+import static com.voidaspect.triviadaemon.service.TriviaRequestContext.ContextParam.*;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableSet;
 
@@ -27,24 +28,38 @@ public final class TriviaStrategy {
 
     public enum TriviaIntent implements Function<TriviaRequest, TriviaResponse> {
 
-        HELP("AMAZON.HelpIntent", request -> null),
+        HELP("AMAZON.HelpIntent", request ->
+                TriviaResponse.builder()
+                        .isFinal(true)
+                        .title(ASKTitle.HELP.get())
+                        .speech(HELP_MESSAGE.get())
+                        .build()),
 
-        STOP(names("AMAZON.StopIntent", "stop"), request -> null),
+        STOP(names("AMAZON.StopIntent", "stop"), request ->
+                TriviaResponse.builder()
+                        .isFinal(true)
+                        .speech(GOODBYE.get())
+                        .title(ASKTitle.EXIT.get())
+                        .build()),
 
         CANCEL("AMAZON.CancelIntent", STOP.function),
 
         QUESTION(names("QuestionIntent", "question.request"), new QuestionService()),
 
+        REPEAT(names("AMAZON.RepeatIntent", "question.repeat"), request ->
+                TriviaResponse.builder()
+                        .isFinal(false)
+                        .speech(getContextParam(request, QUESTION_SPEECH))
+                        .text(getContextParam(request, QUESTION_TEXT))
+                        .title(ASKTitle.PREVIOUS_QUESTION.get())
+                        .build()),
+
         ANSWER(names("AnswerIntent", "question.answer"), request ->
                 TriviaResponse.builder()
-                    .isFinal(false)
-                    .title("")
-                    .speech(Optional.ofNullable(request
-                            .getRequestContext()
-                            .getContextParams()
-                            .get(CORRECT_ANSWER))
-                            .orElse(""))
-                    .build());
+                        .isFinal(false)
+                        .title(ASKTitle.CORRECT_ANSWER.get())
+                        .speech(getContextParam(request, CORRECT_ANSWER))
+                        .build());
 
         private final Set<String> names;
 
@@ -69,6 +84,13 @@ public final class TriviaStrategy {
             return unmodifiableSet(Arrays.stream(names)
                     .distinct()
                     .collect(Collectors.toSet()));
+        }
+
+        private static String
+        getContextParam(TriviaRequest request, TriviaRequestContext.ContextParam cp) {
+            val param = request.getRequestContext().getContextParams().get(cp);
+            return Optional.ofNullable(param)
+                    .orElse(NO_QUESTION.get());
         }
 
     }

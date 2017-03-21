@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.voidaspect.triviadaemon.dialog.ASKTitle;
+import com.voidaspect.triviadaemon.dialog.Phrase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -83,8 +85,8 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
 
         val responseBuilder = TriviaResponse.builder()
                 .isFinal(false)
-                .speech("")
-                .title("");
+                .speech(Phrase.SERVICE_ERROR.get())
+                .title(ASKTitle.NO_RESPONSE.get());
 
         final TriviaResponse triviaResponse;
         try {
@@ -105,11 +107,11 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
                                 .getDescription()
                 };
                 val speech = decodeResult(result.getQuestion());
-                val info = decodeResult(INFO_FORMAT.format(params));
+                val text = decodeResult(INFO_FORMAT.format(params)) + '\n' + speech;
                 responseBuilder
-                        .title("Trivia: New Question")
+                        .title(ASKTitle.NEW_QUESTION.get())
                         .speech(speech)
-                        .text(info + '\n' + speech)
+                        .text(text)
                         .correctAnswer(decodeResult(result.getCorrectAnswer()));
             }
         } catch (IOException e) {

@@ -11,7 +11,7 @@ import lombok.Value;
 @Builder
 public final class TriviaRequest {
 
-    int category;
+//    int category; //todo implement categories
 
     Difficulty difficulty;
 
