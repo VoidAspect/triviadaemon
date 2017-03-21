@@ -1,1 +1,1 @@
-unique-app-id
+amzn1.ask.skill.cc26625b-8c97-415d-a0ef-2c52365c9e71
