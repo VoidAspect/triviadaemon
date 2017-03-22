@@ -11,8 +11,10 @@ import lombok.Value;
 @Builder
 public final class TriviaRequest {
 
+    @NonNull
     QuestionRequest question;
 
+    @NonNull
     GuessRequest guessRequest;
 
     @NonNull

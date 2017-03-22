@@ -50,7 +50,7 @@ public final class TriviaStrategy {
 
             final ASKTitle title;
             final Phrase speech;
-            if (correctAnswer == null) {
+            if (correctAnswer == null || correctAnswer.isEmpty()) {
                 title = ASKTitle.NO_QUESTION_FOUND;
                 speech = NO_QUESTION;
             } else if (userGuess.test(correctAnswer)) {
