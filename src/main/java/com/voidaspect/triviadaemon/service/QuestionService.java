@@ -115,7 +115,7 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
                         .orElseThrow(() -> new UnsupportedOperationException("Unsupported question type"));
 
                 val question = result.getQuestion();
-                val answerPlain = result.getCorrectAnswer();
+                val answer = result.getCorrectAnswer();
 
                 val info = INFO_FORMAT.format(new Object[]{
                         result.getCategory(),
@@ -124,20 +124,24 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
                 });
 
                 final String speech;
-                final String answerText;
                 final String text;
+                final String answerText;
+                final String answerPlain;
                 if (questionType == QuestionType.BOOLEAN) {
-                    answerText = answerPlain.toLowerCase();
+                    answerText = answer.toLowerCase();
+                    answerPlain = answerText;
                     speech = question + ' ' + Phrase.TRUE_OR_FALSE.get();
                     text = info + speech;
                 } else {
-                    answerText = answerPlain;
+                    answerText = answer;
 
                     val answerList = result.getIncorrectAnswers();
-                    answerList.add(answerPlain);
+                    answerList.add(answer);
                     Collections.shuffle(answerList, new Random());
-                    answerList.replaceAll(answer ->
-                            (answerList.indexOf(answer) + 1) + ": " + answer);
+                    answerPlain = String.valueOf(answerList.indexOf(answer) + 1);
+
+                    answerList.replaceAll(choice ->
+                            (answerList.indexOf(choice) + 1) + ": " + choice);
 
                     speech = question + answerList.stream()
                             .collect(Collectors.joining(", ", " ", "."));

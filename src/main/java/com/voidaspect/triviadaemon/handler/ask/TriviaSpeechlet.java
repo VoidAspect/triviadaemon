@@ -12,7 +12,9 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.voidaspect.triviadaemon.service.TriviaRequestContext.ContextParam.*;
 
@@ -107,6 +109,16 @@ final class TriviaSpeechlet implements SpeechletV2 {
         getSlotValue(intent, ASKSlot.TYPE)
                 .flatMap(QuestionType::getByDescription)
                 .ifPresent(requestBuilder::type);
+
+        Set<String> userInput = new HashSet<>();
+
+        getSlotValue(intent, ASKSlot.BOOLEAN)
+                .ifPresent(userInput::add);
+
+        getSlotValue(intent, ASKSlot.NUMBER)
+                .ifPresent(userInput::add);
+
+        requestBuilder.userInput(userInput);
 
         return requestBuilder.build();
     }

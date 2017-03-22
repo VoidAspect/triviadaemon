@@ -14,6 +14,12 @@ public enum ASKTitle {
 
     NEW_QUESTION("Trivia: New Question"),
 
+    CORRECT("Trivia: Correct Guess"),
+
+    INCORRECT("Trivia: Incorrect Guess"),
+
+    NO_QUESTION_FOUND("Trivia: no question"),
+
     CORRECT_ANSWER("Trivia: Correct Answer"),
 
     NO_RESPONSE("No response from Trivia"),

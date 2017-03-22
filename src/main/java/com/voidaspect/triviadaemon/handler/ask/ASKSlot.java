@@ -12,7 +12,11 @@ enum ASKSlot {
 
     DIFFICULTY("Difficulty"),
 
-    TYPE("Type");
+    TYPE("Type"),
+
+    NUMBER("Number"),
+
+    BOOLEAN("Boolean");
 
     private final String slotName;
 

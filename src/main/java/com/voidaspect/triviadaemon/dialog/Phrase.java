@@ -29,6 +29,10 @@ public enum Phrase {
 
     TRUE_OR_FALSE("Is this true or false?"),
 
+    CORRECT_GUESS("Correct!"),
+
+    INCORRECT_GUESS("Wrong!"),
+
     /**
      * Goodbye message.
      */

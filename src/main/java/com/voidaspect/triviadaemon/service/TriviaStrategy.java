@@ -1,6 +1,7 @@
 package com.voidaspect.triviadaemon.service;
 
 import com.voidaspect.triviadaemon.dialog.ASKTitle;
+import com.voidaspect.triviadaemon.dialog.Phrase;
 import lombok.val;
 
 import java.util.Arrays;
@@ -37,6 +38,33 @@ public final class TriviaStrategy {
                         .title(ASKTitle.CORRECT_ANSWER.get())
                         .speech(getContextParam(request, CORRECT_ANSWER))
                         .build()),
+
+        GUESS(names("GuessIntent", "question.guess"), request -> {
+            val userInput = request.getUserInput();
+            val correctAnswer = request.getRequestContext()
+                    .getContextParams()
+                    .get(CORRECT_ANSWER_PLAIN);
+
+            final ASKTitle title;
+            final Phrase speech;
+            if (correctAnswer == null) {
+                title = ASKTitle.NO_QUESTION_FOUND;
+                speech = NO_QUESTION;
+            } else if (userInput.stream()
+                    .anyMatch(s -> s.equalsIgnoreCase(correctAnswer))) {
+                title = ASKTitle.CORRECT;
+                speech = CORRECT_GUESS;
+            } else {
+                title = ASKTitle.INCORRECT;
+                speech = INCORRECT_GUESS;
+            }
+            return TriviaResponse.builder()
+                    .isTerminal(false)
+                    .isQuestion(false)
+                    .title(title.get())
+                    .speech(speech.get())
+                    .build();
+        }),
 
         HELP("AMAZON.HelpIntent", request ->
                 TriviaResponse.builder()

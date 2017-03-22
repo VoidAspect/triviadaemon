@@ -12,7 +12,11 @@ public enum ApiAiParam {
 
     DIFFICULTY("Difficulty"),
 
-    TYPE("Type");
+    TYPE("Type"),
+
+    NUMBER("Number"),
+
+    BOOLEAN("Boolean");
 
     private final String paramName;
 

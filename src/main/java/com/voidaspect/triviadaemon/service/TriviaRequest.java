@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
 
+import java.util.Set;
+
 /**
  * @author mikhail.h
  */
@@ -16,6 +18,8 @@ public final class TriviaRequest {
     Difficulty difficulty;
 
     QuestionType type;
+
+    Set<String> userInput;
 
     @NonNull
     TriviaRequestContext requestContext;
