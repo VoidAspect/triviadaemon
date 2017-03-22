@@ -1,5 +1,6 @@
 package com.voidaspect.triviadaemon.service;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.HttpUrl;
@@ -10,11 +11,10 @@ import com.voidaspect.triviadaemon.dialog.Phrase;
 import com.voidaspect.triviadaemon.service.data.CorrectAnswer;
 import com.voidaspect.triviadaemon.service.data.QuestionRequest;
 import com.voidaspect.triviadaemon.service.data.TriviaResponse;
-import lombok.Data;
-import lombok.SneakyThrows;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.Format;
@@ -48,8 +48,6 @@ final class QuestionService implements Function<QuestionRequest, TriviaResponse>
 
     private static final Format ANSWER_FORMAT =
             new MessageFormat("Correct answer is {0}.");
-
-    private static final String RESPONSE_ENCODING = "UTF-8";
 
     private final OkHttpClient httpClient;
 
@@ -109,8 +107,6 @@ final class QuestionService implements Function<QuestionRequest, TriviaResponse>
                     httpResponse.body().byteStream(),
                     HTTPResponseWrapper.class);
 
-            decodeResponse(responseWrapper);
-
             val results = responseWrapper.getResults();
             if (results != null && results.length > 0) {
                 val result = results[0];
@@ -162,63 +158,69 @@ final class QuestionService implements Function<QuestionRequest, TriviaResponse>
                         .text(text)
                         .correctAnswer(correctAnswer);
             }
+        } catch (IOException e) {
+            log.error("IOException during Trivia request: ", e);
         } catch (Exception e) {
-            log.error("Exception during Trivia request: ", e);
+            log.error("Exception during Trivia request", e);
         } finally {
             triviaResponse = responseBuilder.build();
         }
         return triviaResponse;
     }
 
-    private static void decodeResponse(HTTPResponseWrapper wrapper) {
-        for (val question : wrapper.getResults()) {
-            question.setDifficulty(decode(question.getDifficulty()));
-            question.setCategory(decode(question.getCategory()));
-            question.setType(decode(question.getType()));
-            question.setQuestion(decode(question.getQuestion()));
-            question.setCorrectAnswer(decode(question.getCorrectAnswer()));
-            question.getIncorrectAnswers()
-                    .replaceAll(QuestionService::decode);
+    @Value
+    private static class HTTPResponseWrapper {
+
+        int responseCode;
+
+        Question[] results;
+
+        @JsonCreator
+        public HTTPResponseWrapper(@JsonProperty(value = "response_code") int responseCode,
+                                   @JsonProperty(value = "results") Question[] results) {
+            this.responseCode = responseCode;
+            this.results = results;
         }
     }
 
-    @SneakyThrows(UnsupportedEncodingException.class)
-    private static String decode(String s) {
-        return URLDecoder.decode(s, RESPONSE_ENCODING);
-    }
+    @Value
+    private static class Question {
 
-    @Data
-    private static final class HTTPResponseWrapper {
+        private static final String RESPONSE_ENCODING = "UTF-8";
 
-        @JsonProperty(value = "response_code")
-        private int responseCode;
+        String category;
 
-        @JsonProperty(value = "results")
-        private Question[] results;
+        String type;
 
-    }
+        String difficulty;
 
-    @Data
-    private static final class Question {
+        String question;
 
-        @JsonProperty(value = "category")
-        private String category;
+        String correctAnswer;
 
-        @JsonProperty(value = "type")
-        private String type;
+        List<String> incorrectAnswers;
 
-        @JsonProperty(value = "difficulty")
-        private String difficulty;
+        @JsonCreator
+        public Question(@JsonProperty(value = "category") String category,
+                        @JsonProperty(value = "type") String type,
+                        @JsonProperty(value = "difficulty") String difficulty,
+                        @JsonProperty(value = "question") String question,
+                        @JsonProperty(value = "correct_answer") String correctAnswer,
+                        @JsonProperty(value = "incorrect_answers") List<String> incorrectAnswers) {
+            this.category = decode(category);
+            this.type = decode(type);
+            this.difficulty = decode(difficulty);
+            this.question = decode(question);
+            this.correctAnswer = decode(correctAnswer);
+            this.incorrectAnswers = incorrectAnswers.stream()
+                    .map(Question::decode)
+                    .collect(Collectors.toList());
+        }
 
-        @JsonProperty(value = "question")
-        private String question;
-
-        @JsonProperty(value = "correct_answer")
-        private String correctAnswer;
-
-        @JsonProperty(value = "incorrect_answers")
-        private List<String> incorrectAnswers;
-
+        @SneakyThrows(UnsupportedEncodingException.class)
+        private static String decode(String s) {
+            return URLDecoder.decode(s, RESPONSE_ENCODING);
+        }
     }
 
 }

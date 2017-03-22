@@ -23,7 +23,6 @@ public class TriviaWebhookRequestHandlerTest {
 
     @Test
     public void testHandleRequest() throws Exception {
-
         Map<String, String> meta = new HashMap<>();
         meta.put("intentName", "question.answer");
         val result = new IncompleteResult();
@@ -39,13 +38,10 @@ public class TriviaWebhookRequestHandlerTest {
         assertEquals(textOut, webhookResponse.getDisplayText());
         assertEquals("opentdb.com", webhookResponse.getSource());
         assertTrue(webhookResponse.getContextOut().isEmpty());
-
-
     }
 
     @Test
     public void testQuestionRequest() throws Exception {
-
         Map<String, String> meta = new HashMap<>();
         meta.put("intentName", "question.request");
         Map<String, String> params = new HashMap<>();
@@ -61,8 +57,6 @@ public class TriviaWebhookRequestHandlerTest {
         assertNotNull(webhookResponse.getDisplayText());
         assertEquals("opentdb.com", webhookResponse.getSource());
         assertFalse(webhookResponse.getContextOut().isEmpty());
-
-
     }
 
 }

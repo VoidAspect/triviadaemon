@@ -2,6 +2,7 @@ package com.voidaspect.triviadaemon.handler.apiai.data;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
@@ -9,7 +10,7 @@ import java.util.Set;
  * @author mikhail.h
  */
 @Data
-public class WebhookResponse {
+public class WebhookResponse implements Serializable {
 
     private String speech;
 
