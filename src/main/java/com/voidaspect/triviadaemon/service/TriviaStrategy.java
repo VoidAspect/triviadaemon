@@ -2,6 +2,10 @@ package com.voidaspect.triviadaemon.service;
 
 import com.voidaspect.triviadaemon.dialog.ASKTitle;
 import com.voidaspect.triviadaemon.dialog.Phrase;
+import com.voidaspect.triviadaemon.service.data.CorrectAnswer;
+import com.voidaspect.triviadaemon.service.data.TriviaRequest;
+import com.voidaspect.triviadaemon.service.data.TriviaRequestContext;
+import com.voidaspect.triviadaemon.service.data.TriviaResponse;
 import lombok.val;
 
 import java.util.Arrays;
@@ -11,7 +15,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.voidaspect.triviadaemon.dialog.Phrase.*;
-import static com.voidaspect.triviadaemon.service.TriviaRequestContext.ContextParam.*;
+import static com.voidaspect.triviadaemon.service.data.TriviaRequestContext.ContextParam.*;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableSet;
 
@@ -29,18 +33,18 @@ public final class TriviaStrategy {
 
     public enum TriviaIntent implements Function<TriviaRequest, TriviaResponse> {
 
-        QUESTION(names("QuestionIntent", "question.request"), new QuestionService()),
+        QUESTION(names("QuestionIntent", "question.request"),
+                new QuestionService().compose(TriviaRequest::getQuestion)),
 
         ANSWER(names("AnswerIntent", "question.answer"), request ->
                 TriviaResponse.builder()
                         .isTerminal(false)
-                        .isQuestion(false)
                         .title(ASKTitle.CORRECT_ANSWER.get())
                         .speech(getContextParam(request, CORRECT_ANSWER))
                         .build()),
 
         GUESS(names("GuessIntent", "question.guess"), request -> {
-            val userInput = request.getUserInput();
+            val userGuess = request.getGuessRequest();
             val correctAnswer = request.getRequestContext()
                     .getContextParams()
                     .get(CORRECT_ANSWER_PLAIN);
@@ -50,8 +54,7 @@ public final class TriviaStrategy {
             if (correctAnswer == null) {
                 title = ASKTitle.NO_QUESTION_FOUND;
                 speech = NO_QUESTION;
-            } else if (userInput.stream()
-                    .anyMatch(s -> s.equalsIgnoreCase(correctAnswer))) {
+            } else if (userGuess.test(correctAnswer)) {
                 title = ASKTitle.CORRECT;
                 speech = CORRECT_GUESS;
             } else {
@@ -60,7 +63,6 @@ public final class TriviaStrategy {
             }
             return TriviaResponse.builder()
                     .isTerminal(false)
-                    .isQuestion(false)
                     .title(title.get())
                     .speech(speech.get())
                     .build();
@@ -69,7 +71,6 @@ public final class TriviaStrategy {
         HELP("AMAZON.HelpIntent", request ->
                 TriviaResponse.builder()
                         .isTerminal(true)
-                        .isQuestion(false)
                         .title(ASKTitle.HELP.get())
                         .speech(HELP_MESSAGE.get())
                         .build()),
@@ -77,7 +78,6 @@ public final class TriviaStrategy {
         REPEAT(names("AMAZON.RepeatIntent", "question.repeat"), request ->
                 TriviaResponse.builder()
                         .isTerminal(false)
-                        .isQuestion(false)
                         .speech(getContextParam(request, QUESTION_SPEECH))
                         .text(getContextParam(request, QUESTION_TEXT))
                         .title(ASKTitle.PREVIOUS_QUESTION.get())
@@ -86,7 +86,6 @@ public final class TriviaStrategy {
         STOP("AMAZON.StopIntent", request ->
                 TriviaResponse.builder()
                         .isTerminal(true)
-                        .isQuestion(false)
                         .speech(GOODBYE.get())
                         .title(ASKTitle.EXIT.get())
                         .build()),

@@ -7,6 +7,7 @@ import com.amazon.speech.speechlet.*;
 import com.voidaspect.triviadaemon.dialog.ASKTitle;
 import com.voidaspect.triviadaemon.dialog.Phrase;
 import com.voidaspect.triviadaemon.service.*;
+import com.voidaspect.triviadaemon.service.data.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.voidaspect.triviadaemon.service.TriviaRequestContext.ContextParam.*;
+import static com.voidaspect.triviadaemon.service.data.TriviaRequestContext.ContextParam.*;
 
 /**
  * @author mikhail.h
@@ -70,9 +71,10 @@ final class TriviaSpeechlet implements SpeechletV2 {
         val text = response.getText();
         val speech = response.getSpeech();
 
-        if (response.isQuestion()) {
-            session.setAttribute(CORRECT_ANSWER.name(), response.getCorrectAnswer());
-            session.setAttribute(CORRECT_ANSWER_PLAIN.name(), response.getCorrectAnswerPlain());
+        val correctAnswer = response.getCorrectAnswer();
+        if (correctAnswer != null) {
+            session.setAttribute(CORRECT_ANSWER.name(), correctAnswer.getAnswerDescription());
+            session.setAttribute(CORRECT_ANSWER_PLAIN.name(), correctAnswer.getAnswerPlain());
             session.setAttribute(QUESTION_SPEECH.name(), speech);
             session.setAttribute(QUESTION_TEXT.name(), text);
         }
@@ -99,28 +101,25 @@ final class TriviaSpeechlet implements SpeechletV2 {
         contextParams.put(QUESTION_SPEECH, (String) session.getAttribute(QUESTION_SPEECH.name()));
         contextParams.put(QUESTION_TEXT, (String) session.getAttribute(QUESTION_TEXT.name()));
 
-        val requestBuilder = TriviaRequest.builder()
-                .requestContext(requestContext);
-
+        val questionRequestBuilder = QuestionRequest.builder();
         getSlotValue(intent, ASKSlot.DIFFICULTY)
                 .flatMap(Difficulty::getByName)
-                .ifPresent(requestBuilder::difficulty);
-
+                .ifPresent(questionRequestBuilder::difficulty);
         getSlotValue(intent, ASKSlot.TYPE)
                 .flatMap(QuestionType::getByDescription)
-                .ifPresent(requestBuilder::type);
+                .ifPresent(questionRequestBuilder::type);
 
         Set<String> userInput = new HashSet<>();
-
         getSlotValue(intent, ASKSlot.BOOLEAN)
                 .ifPresent(userInput::add);
-
         getSlotValue(intent, ASKSlot.NUMBER)
                 .ifPresent(userInput::add);
 
-        requestBuilder.userInput(userInput);
-
-        return requestBuilder.build();
+        return TriviaRequest.builder()
+                .requestContext(requestContext)
+                .question(questionRequestBuilder.build())
+                .guessRequest(new GuessRequest(userInput))
+                .build();
     }
 
     @Override

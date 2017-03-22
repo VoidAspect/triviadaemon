@@ -3,7 +3,6 @@ package com.voidaspect.triviadaemon.handler.apiai;
 import com.voidaspect.triviadaemon.handler.MockContext;
 import com.voidaspect.triviadaemon.handler.apiai.data.IncompleteResult;
 import com.voidaspect.triviadaemon.handler.apiai.data.WebhookRequest;
-import com.voidaspect.triviadaemon.handler.apiai.data.WebhookResponse;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
@@ -11,7 +10,8 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author mikhail.h

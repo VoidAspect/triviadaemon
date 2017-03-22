@@ -1,5 +1,6 @@
 package com.voidaspect.triviadaemon.service;
 
+import com.voidaspect.triviadaemon.service.data.QuestionRequest;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
@@ -17,23 +18,21 @@ public class QuestionServiceTest {
 
         val questionService = new QuestionService();
 
-        val request = TriviaRequest.builder()
+        val question = QuestionRequest.builder()
                 .difficulty(Difficulty.MEDIUM)
                 .type(QuestionType.MULTIPLE)
-                .requestContext(new TriviaRequestContext())
                 .build();
 
-        val triviaResponse = questionService.apply(request);
+        val triviaResponse = questionService.apply(question);
 
         log.debug("{}", triviaResponse);
 
         assertEquals("Trivia: New Question", triviaResponse.getTitle());
-        assertTrue(triviaResponse.isQuestion());
         assertFalse(triviaResponse.isTerminal());
         assertNotNull(triviaResponse.getText());
         assertNotNull(triviaResponse.getSpeech());
         assertTrue(triviaResponse.getText().contains("difficulty: medium, type: Multiple choice."));
-        assertTrue(triviaResponse.getCorrectAnswer().startsWith("Correct answer is "));
+        assertTrue(triviaResponse.getCorrectAnswer().getAnswerDescription().startsWith("Correct answer is "));
 
     }
 

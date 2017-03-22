@@ -7,6 +7,9 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.voidaspect.triviadaemon.dialog.ASKTitle;
 import com.voidaspect.triviadaemon.dialog.Phrase;
+import com.voidaspect.triviadaemon.service.data.CorrectAnswer;
+import com.voidaspect.triviadaemon.service.data.QuestionRequest;
+import com.voidaspect.triviadaemon.service.data.TriviaResponse;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +19,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.Format;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -25,7 +31,7 @@ import java.util.stream.Collectors;
  * @author mikhail.h
  */
 @Slf4j
-final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
+final class QuestionService implements Function<QuestionRequest, TriviaResponse> {
 
     private static final String QUESTION_LIMIT = String.valueOf(1);
 
@@ -57,7 +63,7 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
     }
 
     @Override
-    public TriviaResponse apply(TriviaRequest request) {
+    public TriviaResponse apply(QuestionRequest request) {
 
         /* Create HTTP Request */
 
@@ -92,7 +98,6 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
         /* Response builder is populated by default by error messages */
         val responseBuilder = TriviaResponse.builder()
                 .isTerminal(false)
-                .isQuestion(true)
                 .speech(Phrase.SERVICE_ERROR.get())
                 .title(ASKTitle.NO_RESPONSE.get());
 
@@ -149,14 +154,14 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
                     text = info + question + answerList.stream()
                             .collect(Collectors.joining("\n", "\n", ""));
                 }
-                val correctAnswer = ANSWER_FORMAT.format(new Object[]{answerText});
+                val correctAnswerDescription = ANSWER_FORMAT.format(new Object[]{answerText});
 
+                val correctAnswer = new CorrectAnswer(correctAnswerDescription, answerPlain);
                 //Populate response builder with data
                 responseBuilder
                         .title(ASKTitle.NEW_QUESTION.get())
                         .speech(speech)
                         .text(text)
-                        .correctAnswerPlain(answerPlain)
                         .correctAnswer(correctAnswer);
             }
         } catch (Exception e) {

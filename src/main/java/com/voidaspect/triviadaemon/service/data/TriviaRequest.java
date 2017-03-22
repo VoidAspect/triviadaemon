@@ -1,10 +1,8 @@
-package com.voidaspect.triviadaemon.service;
+package com.voidaspect.triviadaemon.service.data;
 
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
-
-import java.util.Set;
 
 /**
  * @author mikhail.h
@@ -13,13 +11,9 @@ import java.util.Set;
 @Builder
 public final class TriviaRequest {
 
-//    int category; //todo implement categories
+    QuestionRequest question;
 
-    Difficulty difficulty;
-
-    QuestionType type;
-
-    Set<String> userInput;
+    GuessRequest guessRequest;
 
     @NonNull
     TriviaRequestContext requestContext;

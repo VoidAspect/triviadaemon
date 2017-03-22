@@ -1,4 +1,4 @@
-package com.voidaspect.triviadaemon.service;
+package com.voidaspect.triviadaemon.service.data;
 
 import lombok.Getter;
 

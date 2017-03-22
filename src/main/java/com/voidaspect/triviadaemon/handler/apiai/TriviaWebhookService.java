@@ -5,6 +5,7 @@ import com.voidaspect.triviadaemon.handler.apiai.data.RequestContext;
 import com.voidaspect.triviadaemon.handler.apiai.data.WebhookRequest;
 import com.voidaspect.triviadaemon.handler.apiai.data.WebhookResponse;
 import com.voidaspect.triviadaemon.service.*;
+import com.voidaspect.triviadaemon.service.data.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.val;
@@ -12,7 +13,7 @@ import lombok.val;
 import java.util.*;
 import java.util.function.Function;
 
-import static com.voidaspect.triviadaemon.service.TriviaRequestContext.ContextParam.*;
+import static com.voidaspect.triviadaemon.service.data.TriviaRequestContext.ContextParam.*;
 
 /**
  * @author mikhail.h
@@ -69,28 +70,39 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
                     contextParams.put(QUESTION_TEXT, params.get(QUESTION_TEXT.name()));
                 });
 
-        val requestBuilder = TriviaRequest.builder()
-                .requestContext(requestContext);
+        val questionRequestBuilder = QuestionRequest.builder();
         getRequestParam(requestData, ApiAiParam.DIFFICULTY)
                 .flatMap(Difficulty::getByName)
-                .ifPresent(requestBuilder::difficulty);
+                .ifPresent(questionRequestBuilder::difficulty);
         getRequestParam(requestData, ApiAiParam.TYPE)
                 .flatMap(QuestionType::getByDescription)
-                .ifPresent(requestBuilder::type);
-        return requestBuilder.build();
+                .ifPresent(questionRequestBuilder::type);
+
+        Set<String> userInput = new HashSet<>();
+        getRequestParam(requestData, ApiAiParam.BOOLEAN)
+                .ifPresent(userInput::add);
+        getRequestParam(requestData, ApiAiParam.NUMBER)
+                .ifPresent(userInput::add);
+
+        return TriviaRequest.builder()
+                .question(questionRequestBuilder.build())
+                .requestContext(requestContext)
+                .guessRequest(new GuessRequest(userInput))
+                .build();
     }
 
     private WebhookResponse createWebhookResponse(TriviaResponse triviaResponse) {
         val text = triviaResponse.getText();
         val speech = triviaResponse.getSpeech();
 
+        val correctAnswer = triviaResponse.getCorrectAnswer();
         final Set<RequestContext> requestContexts;
-        if (triviaResponse.isQuestion()) {
+        if (correctAnswer != null) {
             Map<String, String> contextOutParams = new HashMap<>();
             contextOutParams.put(QUESTION_TEXT.name(), text);
             contextOutParams.put(QUESTION_SPEECH.name(), speech);
-            contextOutParams.put(CORRECT_ANSWER.name(), triviaResponse.getCorrectAnswer());
-            contextOutParams.put(CORRECT_ANSWER_PLAIN.name(), triviaResponse.getCorrectAnswerPlain());
+            contextOutParams.put(CORRECT_ANSWER.name(), correctAnswer.getAnswerDescription());
+            contextOutParams.put(CORRECT_ANSWER_PLAIN.name(), correctAnswer.getAnswerPlain());
 
             RequestContext contextOut = new RequestContext();
             contextOut.setName(RECENT_QUESTION_CONTEXT_NAME);

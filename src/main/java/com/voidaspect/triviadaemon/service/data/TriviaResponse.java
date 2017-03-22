@@ -1,4 +1,4 @@
-package com.voidaspect.triviadaemon.service;
+package com.voidaspect.triviadaemon.service.data;
 
 import lombok.Builder;
 import lombok.NonNull;
@@ -21,13 +21,9 @@ public final class TriviaResponse {
     @NonNull
     String speech;
 
-    String correctAnswer;
-
-    String correctAnswerPlain;
+    CorrectAnswer correctAnswer;
 
     boolean isTerminal;
-
-    boolean isQuestion;
 
     public String getText() {
         return Optional.ofNullable(text).orElse(speech);

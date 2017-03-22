@@ -26,8 +26,8 @@ final class SpeechletResponseFactory {
      * @return SpeechletResponse the speechlet response
      */
     SpeechletResponse newAskResponse(Phrase output,
-                                            Phrase reprompt,
-                                            ASKTitle cardTitle) {
+                                     Phrase reprompt,
+                                     ASKTitle cardTitle) {
         return newAskResponse(output.get(), reprompt.get(), cardTitle);
     }
 
@@ -41,8 +41,8 @@ final class SpeechletResponseFactory {
      * @return SpeechletResponse the speechlet response
      */
     SpeechletResponse newAskResponse(String stringOutput,
-                                            String repromptText,
-                                            ASKTitle cardTitle) {
+                                     String repromptText,
+                                     ASKTitle cardTitle) {
         return newAskResponse(stringOutput, repromptText, stringOutput, cardTitle);
     }
 
@@ -57,9 +57,9 @@ final class SpeechletResponseFactory {
      * @return SpeechletResponse the speechlet response
      */
     SpeechletResponse newAskResponse(String stringOutput,
-                                            String repromptText,
-                                            String cardContent,
-                                            ASKTitle cardTitle) {
+                                     String repromptText,
+                                     String cardContent,
+                                     ASKTitle cardTitle) {
         return newAskResponse(stringOutput, repromptText, cardContent, cardTitle.get());
     }
 
@@ -74,9 +74,9 @@ final class SpeechletResponseFactory {
      * @return SpeechletResponse the speechlet response
      */
     SpeechletResponse newAskResponse(String stringOutput,
-                                            String repromptText,
-                                            String cardContent,
-                                            String cardTitle) {
+                                     String repromptText,
+                                     String cardContent,
+                                     String cardTitle) {
         val outputSpeech = new PlainTextOutputSpeech();
         outputSpeech.setText(stringOutput);
 
@@ -104,8 +104,8 @@ final class SpeechletResponseFactory {
      * @return SpeechletResponse the speechlet response
      */
     SpeechletResponse newTellResponse(String speech,
-                                             String text,
-                                             String cardTitle) {
+                                      String text,
+                                      String cardTitle) {
         val outputSpeech = new PlainTextOutputSpeech();
         outputSpeech.setText(speech);
 
