@@ -11,7 +11,7 @@ import java.util.Map;
 public final class TriviaRequestContext {
 
     public enum ContextParam {
-        QUESTION_SPEECH, QUESTION_TEXT, CORRECT_ANSWER
+        QUESTION_SPEECH, QUESTION_TEXT, CORRECT_ANSWER, CORRECT_ANSWER_PLAIN
     }
 
     @Getter

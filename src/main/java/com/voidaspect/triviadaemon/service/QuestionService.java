@@ -45,12 +45,13 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
 
     private final OkHttpClient httpClient;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     QuestionService() {
         httpClient = new OkHttpClient();
         httpClient.setReadTimeout(3, TimeUnit.SECONDS);
         httpClient.setWriteTimeout(3, TimeUnit.SECONDS);
+        objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -108,15 +109,15 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
                 val result = results[0];
                 val questionType = QuestionType.getByName(result.getType());
 
-                val question = decodeResult(result.getQuestion()).trim();
-                val answer = decodeResult(result.getCorrectAnswer()).trim();
+                val question = decodeResult(result.getQuestion());
+                val answerPlain = decodeResult(result.getCorrectAnswer());
                 final String speech;
                 final String answerText;
                 if (questionType == QuestionType.BOOLEAN) {
-                    answerText = answer.toLowerCase();
+                    answerText = answerPlain.toLowerCase();
                     speech = question + ' ' + Phrase.TRUE_OR_FALSE.get();
                 } else {
-                    answerText = answer;
+                    answerText = answerPlain;
                     speech = question;
                 }
                 val correctAnswer = ANSWER_FORMAT.format(new Object[]{answerText});
@@ -133,6 +134,7 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
                         .title(ASKTitle.NEW_QUESTION.get())
                         .speech(speech)
                         .text(text)
+                        .correctAnswerPlain(answerPlain)
                         .correctAnswer(correctAnswer);
             }
         } catch (IOException e) {
@@ -144,29 +146,34 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
     }
 
     private String decodeResult(String string) throws UnsupportedEncodingException {
-        return URLDecoder.decode(string, "UTF-8");
+        return URLDecoder.decode(string, "UTF-8").trim();
     }
 
     @Data
-    private static class HTTPResponseWrapper {
+    private static final class HTTPResponseWrapper {
 
         @JsonProperty(value = "response_code")
         private int responseCode;
 
+        @JsonProperty(value = "results")
         private Question[] results;
 
     }
 
     @Data
     @JsonIgnoreProperties(value = {"incorrect_answers"})
-    private static class Question {
+    private static final class Question {
 
+        @JsonProperty(value = "category")
         private String category;
 
+        @JsonProperty(value = "type")
         private String type;
 
+        @JsonProperty(value = "difficulty")
         private String difficulty;
 
+        @JsonProperty(value = "question")
         private String question;
 
         @JsonProperty(value = "correct_answer")

@@ -23,6 +23,8 @@ public final class TriviaResponse {
 
     String correctAnswer;
 
+    String correctAnswerPlain;
+
     boolean isTerminal;
 
     boolean isQuestion;

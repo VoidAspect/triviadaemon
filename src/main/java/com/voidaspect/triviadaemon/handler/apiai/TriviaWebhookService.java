@@ -64,6 +64,7 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
                 .map(RequestContext::getParameters)
                 .ifPresent(params -> {
                     contextParams.put(CORRECT_ANSWER, params.get(CORRECT_ANSWER.name()));
+                    contextParams.put(CORRECT_ANSWER_PLAIN, params.get(CORRECT_ANSWER_PLAIN.name()));
                     contextParams.put(QUESTION_SPEECH, params.get(QUESTION_SPEECH.name()));
                     contextParams.put(QUESTION_TEXT, params.get(QUESTION_TEXT.name()));
                 });
@@ -89,6 +90,7 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
             contextOutParams.put(QUESTION_TEXT.name(), text);
             contextOutParams.put(QUESTION_SPEECH.name(), speech);
             contextOutParams.put(CORRECT_ANSWER.name(), triviaResponse.getCorrectAnswer());
+            contextOutParams.put(CORRECT_ANSWER_PLAIN.name(), triviaResponse.getCorrectAnswerPlain());
 
             RequestContext contextOut = new RequestContext();
             contextOut.setName(RECENT_QUESTION_CONTEXT_NAME);

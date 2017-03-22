@@ -70,6 +70,7 @@ final class TriviaSpeechlet implements SpeechletV2 {
 
         if (response.isQuestion()) {
             session.setAttribute(CORRECT_ANSWER.name(), response.getCorrectAnswer());
+            session.setAttribute(CORRECT_ANSWER_PLAIN.name(), response.getCorrectAnswerPlain());
             session.setAttribute(QUESTION_SPEECH.name(), speech);
             session.setAttribute(QUESTION_TEXT.name(), text);
         }
@@ -92,6 +93,7 @@ final class TriviaSpeechlet implements SpeechletV2 {
         val contextParams = requestContext.getContextParams();
 
         contextParams.put(CORRECT_ANSWER, (String) session.getAttribute(CORRECT_ANSWER.name()));
+        contextParams.put(CORRECT_ANSWER_PLAIN, (String) session.getAttribute(CORRECT_ANSWER_PLAIN.name()));
         contextParams.put(QUESTION_SPEECH, (String) session.getAttribute(QUESTION_SPEECH.name()));
         contextParams.put(QUESTION_TEXT, (String) session.getAttribute(QUESTION_TEXT.name()));
 
