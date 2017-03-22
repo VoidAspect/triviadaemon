@@ -55,29 +55,26 @@ final class TriviaSpeechlet implements SpeechletV2 {
 
         val intent = request.getIntent();
 
-        val requestBuilder = TriviaRequest.builder()
-                .requestContext(createRequestContext(session));
+        val triviaRequest = createTriviaRequest(session, intent);
 
-        getSlotValue(intent, ASKSlot.DIFFICULTY)
-                .flatMap(Difficulty::getByName)
-                .ifPresent(requestBuilder::difficulty);
-
-        getSlotValue(intent, ASKSlot.TYPE)
-                .flatMap(QuestionType::getByDescription)
-                .ifPresent(requestBuilder::type);
-
-        val triviaRequest = requestBuilder.build();
-
-        val strategy = getTriviaStrategy(); //lazily get the strategy.
-
-        val response = strategy.getIntentByName(intent.getName())
+        val response = getTriviaStrategy()
+                .getIntentByName(intent.getName())
                 .apply(triviaRequest);
 
-        saveResponseInSession(session, response);
+        return createSpeechletResponse(session, response);
+    }
 
-        val title = response.getTitle();
+    private SpeechletResponse createSpeechletResponse(Session session, TriviaResponse response) {
         val text = response.getText();
         val speech = response.getSpeech();
+
+        if (response.isQuestion()) {
+            session.setAttribute(CORRECT_ANSWER.name(), response.getCorrectAnswer());
+            session.setAttribute(QUESTION_SPEECH.name(), speech);
+            session.setAttribute(QUESTION_TEXT.name(), text);
+        }
+
+        val title = response.getTitle();
 
         final SpeechletResponse speechletResponse;
         if (response.isTerminal()) {
@@ -87,18 +84,10 @@ final class TriviaSpeechlet implements SpeechletV2 {
             speechletResponse = responseFactory
                     .newAskResponse(speech, Phrase.REPROMPT.get(), text, title);
         }
-
         return speechletResponse;
     }
 
-    @Override
-    public void onSessionEnded(SpeechletRequestEnvelope<SessionEndedRequest> requestEnvelope) {
-        log.info("onSessionEnded requestId={}, sessionId={}",
-                requestEnvelope.getRequest().getRequestId(),
-                requestEnvelope.getSession().getSessionId());
-    }
-
-    private TriviaRequestContext createRequestContext(Session session) {
+    private TriviaRequest createTriviaRequest(Session session, Intent intent) {
         val requestContext = new TriviaRequestContext();
         val contextParams = requestContext.getContextParams();
 
@@ -106,15 +95,25 @@ final class TriviaSpeechlet implements SpeechletV2 {
         contextParams.put(QUESTION_SPEECH, (String) session.getAttribute(QUESTION_SPEECH.name()));
         contextParams.put(QUESTION_TEXT, (String) session.getAttribute(QUESTION_TEXT.name()));
 
-        return requestContext;
+        val requestBuilder = TriviaRequest.builder()
+                .requestContext(requestContext);
+
+        getSlotValue(intent, ASKSlot.DIFFICULTY)
+                .flatMap(Difficulty::getByName)
+                .ifPresent(requestBuilder::difficulty);
+
+        getSlotValue(intent, ASKSlot.TYPE)
+                .flatMap(QuestionType::getByDescription)
+                .ifPresent(requestBuilder::type);
+
+        return requestBuilder.build();
     }
 
-    private void saveResponseInSession(Session session, TriviaResponse response) {
-        if (response.isQuestion()) {
-            session.setAttribute(CORRECT_ANSWER.name(), response.getCorrectAnswer());
-            session.setAttribute(QUESTION_SPEECH.name(), response.getSpeech());
-            session.setAttribute(QUESTION_TEXT.name(), response.getText());
-        }
+    @Override
+    public void onSessionEnded(SpeechletRequestEnvelope<SessionEndedRequest> requestEnvelope) {
+        log.info("onSessionEnded requestId={}, sessionId={}",
+                requestEnvelope.getRequest().getRequestId(),
+                requestEnvelope.getSession().getSessionId());
     }
 
     private Optional<String> getSlotValue(Intent intent, ASKSlot askSlot) {
