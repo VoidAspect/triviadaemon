@@ -19,7 +19,7 @@ public class QuestionServiceTest {
 
         val request = TriviaRequest.builder()
                 .difficulty(Difficulty.MEDIUM)
-                .type(QuestionType.BOOLEAN)
+                .type(QuestionType.MULTIPLE)
                 .requestContext(new TriviaRequestContext())
                 .build();
 
@@ -32,7 +32,7 @@ public class QuestionServiceTest {
         assertFalse(triviaResponse.isTerminal());
         assertNotNull(triviaResponse.getText());
         assertNotNull(triviaResponse.getSpeech());
-        assertTrue(triviaResponse.getText().contains("difficulty: medium, type: True or False"));
+        assertTrue(triviaResponse.getText().contains("difficulty: medium, type: Multiple choice."));
         assertTrue(triviaResponse.getCorrectAnswer().startsWith("Correct answer is "));
 
     }

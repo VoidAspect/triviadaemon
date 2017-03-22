@@ -24,11 +24,10 @@ public enum QuestionType {
 
     private final String description;
 
-    public static QuestionType getByName(String name) {
+    public static Optional<QuestionType> getByName(String name) {
         return Arrays.stream(values())
                 .filter(questionType -> questionType.name.equals(name))
-                .findAny()
-                .orElse(UNKNOWN);
+                .findAny();
     }
 
     public static Optional<QuestionType> getByDescription(String description) {

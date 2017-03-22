@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Phrase {
 
-    HELP_MESSAGE("You can request me to ask you questions. " +
+    HELP_MESSAGE("You can ask me to generate a question. " +
             "For example, say: Give me an easy question with multiple choice."),
 
     /**
@@ -19,7 +19,7 @@ public enum Phrase {
     /**
      * Welcome message at the start of the interaction.
      */
-    WELCOME_MESSAGE("Welcome to Trivia Daemon. " + HELP_MESSAGE.get()),
+    WELCOME_MESSAGE("Welcome to Trivia Daemon! " + HELP_MESSAGE.get()),
 
     REPROMPT("What else can I help you with?"),
 

@@ -1,6 +1,5 @@
 package com.voidaspect.triviadaemon.service;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.HttpUrl;
@@ -9,17 +8,18 @@ import com.squareup.okhttp.Request;
 import com.voidaspect.triviadaemon.dialog.ASKTitle;
 import com.voidaspect.triviadaemon.dialog.Phrase;
 import lombok.Data;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.Format;
 import java.text.MessageFormat;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author mikhail.h
@@ -38,10 +38,12 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
     private static final String REQUEST_ENCODING = "url3986";
 
     private static final Format INFO_FORMAT =
-            new MessageFormat("Category: {0}, difficulty: {1}, type: {2}.");
+            new MessageFormat("Category: {0}, difficulty: {1}, type: {2}.\n");
 
     private static final Format ANSWER_FORMAT =
             new MessageFormat("Correct answer is {0}.");
+
+    private static final String RESPONSE_ENCODING = "UTF-8";
 
     private final OkHttpClient httpClient;
 
@@ -104,30 +106,46 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
                     httpResponse.body().byteStream(),
                     HTTPResponseWrapper.class);
 
+            decodeResponse(responseWrapper);
+
             val results = responseWrapper.getResults();
             if (results != null && results.length > 0) {
                 val result = results[0];
-                val questionType = QuestionType.getByName(result.getType());
+                val questionType = QuestionType.getByName(result.getType())
+                        .orElseThrow(() -> new UnsupportedOperationException("Unsupported question type"));
 
-                val question = decodeResult(result.getQuestion());
-                val answerPlain = decodeResult(result.getCorrectAnswer());
-                final String speech;
-                final String answerText;
-                if (questionType == QuestionType.BOOLEAN) {
-                    answerText = answerPlain.toLowerCase();
-                    speech = question + ' ' + Phrase.TRUE_OR_FALSE.get();
-                } else {
-                    answerText = answerPlain;
-                    speech = question;
-                }
-                val correctAnswer = ANSWER_FORMAT.format(new Object[]{answerText});
+                val question = result.getQuestion();
+                val answerPlain = result.getCorrectAnswer();
 
-                val params = new Object[]{
+                val info = INFO_FORMAT.format(new Object[]{
                         result.getCategory(),
                         result.getDifficulty(),
                         questionType.getDescription()
-                };
-                val text = decodeResult(INFO_FORMAT.format(params)) + '\n' + speech;
+                });
+
+                final String speech;
+                final String answerText;
+                final String text;
+                if (questionType == QuestionType.BOOLEAN) {
+                    answerText = answerPlain.toLowerCase();
+                    speech = question + ' ' + Phrase.TRUE_OR_FALSE.get();
+                    text = info + speech;
+                } else {
+                    answerText = answerPlain;
+
+                    val answerList = result.getIncorrectAnswers();
+                    answerList.add(answerPlain);
+                    Collections.shuffle(answerList, new Random());
+                    answerList.replaceAll(answer ->
+                            (answerList.indexOf(answer) + 1) + ": " + answer);
+
+                    speech = question + answerList.stream()
+                            .collect(Collectors.joining(", ", " ", "."));
+
+                    text = info + question + answerList.stream()
+                            .collect(Collectors.joining("\n", "\n", ""));
+                }
+                val correctAnswer = ANSWER_FORMAT.format(new Object[]{answerText});
 
                 //Populate response builder with data
                 responseBuilder
@@ -137,16 +155,29 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
                         .correctAnswerPlain(answerPlain)
                         .correctAnswer(correctAnswer);
             }
-        } catch (IOException e) {
-            log.error("IOException during Trivia request: ", e);
+        } catch (Exception e) {
+            log.error("Exception during Trivia request: ", e);
         } finally {
             triviaResponse = responseBuilder.build();
         }
         return triviaResponse;
     }
 
-    private String decodeResult(String string) throws UnsupportedEncodingException {
-        return URLDecoder.decode(string, "UTF-8").trim();
+    private static void decodeResponse(HTTPResponseWrapper wrapper) {
+        for (val question : wrapper.getResults()) {
+            question.setDifficulty(decode(question.getDifficulty()));
+            question.setCategory(decode(question.getCategory()));
+            question.setType(decode(question.getType()));
+            question.setQuestion(decode(question.getQuestion()));
+            question.setCorrectAnswer(decode(question.getCorrectAnswer()));
+            question.getIncorrectAnswers()
+                    .replaceAll(QuestionService::decode);
+        }
+    }
+
+    @SneakyThrows(UnsupportedEncodingException.class)
+    private static String decode(String s) {
+        return URLDecoder.decode(s, RESPONSE_ENCODING);
     }
 
     @Data
@@ -161,7 +192,6 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
     }
 
     @Data
-    @JsonIgnoreProperties(value = {"incorrect_answers"})
     private static final class Question {
 
         @JsonProperty(value = "category")
@@ -178,6 +208,9 @@ final class QuestionService implements Function<TriviaRequest, TriviaResponse> {
 
         @JsonProperty(value = "correct_answer")
         private String correctAnswer;
+
+        @JsonProperty(value = "incorrect_answers")
+        private List<String> incorrectAnswers;
 
     }
 
