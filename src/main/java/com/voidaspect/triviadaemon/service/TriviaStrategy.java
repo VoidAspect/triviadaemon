@@ -57,11 +57,11 @@ public final class TriviaStrategy {
 
         STOP("AMAZON.StopIntent", request ->
                 TriviaResponse.builder()
-                .isTerminal(true)
+                        .isTerminal(true)
                         .isQuestion(false)
                         .speech(GOODBYE.get())
-                .title(ASKTitle.EXIT.get())
-                .build()),
+                        .title(ASKTitle.EXIT.get())
+                        .build()),
 
         CANCEL("AMAZON.CancelIntent", STOP.function);
 

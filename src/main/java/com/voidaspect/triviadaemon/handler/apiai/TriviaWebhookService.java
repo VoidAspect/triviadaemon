@@ -46,17 +46,15 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
 
         val triviaRequest = createTriviaRequest(result);
 
-        val triviaResponse = getTriviaStrategy().getIntentByName(intentName).apply(triviaRequest);
+        val triviaResponse = getTriviaStrategy()
+                .getIntentByName(intentName)
+                .apply(triviaRequest);
 
-        return webhookResponseFactory.newWebhookResponse(
-                triviaResponse.getSpeech(),
-                triviaResponse.getText(),
-                createContextOut(triviaResponse));
+        return createWebhookResponse(triviaResponse);
 
     }
 
     private TriviaRequest createTriviaRequest(IncompleteResult requestData) {
-
         val requestContext = new TriviaRequestContext();
         val contextParams = requestContext.getContextParams();
         Optional.ofNullable(requestData.getContexts())
@@ -81,13 +79,16 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
         return requestBuilder.build();
     }
 
-    private Set<RequestContext> createContextOut(TriviaResponse response) {
+    private WebhookResponse createWebhookResponse(TriviaResponse triviaResponse) {
+        val text = triviaResponse.getText();
+        val speech = triviaResponse.getSpeech();
+
         final Set<RequestContext> requestContexts;
-        if (response.isQuestion()) {
+        if (triviaResponse.isQuestion()) {
             Map<String, String> contextOutParams = new HashMap<>();
-            contextOutParams.put(QUESTION_TEXT.name(), response.getText());
-            contextOutParams.put(QUESTION_SPEECH.name(), response.getSpeech());
-            contextOutParams.put(CORRECT_ANSWER.name(), response.getCorrectAnswer());
+            contextOutParams.put(QUESTION_TEXT.name(), text);
+            contextOutParams.put(QUESTION_SPEECH.name(), speech);
+            contextOutParams.put(CORRECT_ANSWER.name(), triviaResponse.getCorrectAnswer());
 
             RequestContext contextOut = new RequestContext();
             contextOut.setName(RECENT_QUESTION_CONTEXT_NAME);
@@ -97,10 +98,12 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
         } else {
             requestContexts = Collections.emptySet();
         }
-        return Collections.unmodifiableSet(requestContexts);
+
+        return webhookResponseFactory.newWebhookResponse(speech, text, requestContexts);
     }
 
     private Optional<String> getRequestParam(IncompleteResult requestData, ApiAiParam param) {
-        return Optional.ofNullable(requestData.getParameters().get(param.getParamName()));
+        return Optional.ofNullable(requestData.getParameters())
+                .map(params -> params.get(param.getParamName()));
     }
 }
