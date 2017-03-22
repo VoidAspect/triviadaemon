@@ -44,19 +44,8 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
 
         val intentName = result.getMetadata().get(INTENT_NAME_KEY);
 
-        val requestBuilder = TriviaRequest
-                .builder()
-                .requestContext(createRequestContext(result));
+        val triviaRequest = createTriviaRequest(result);
 
-        getRequestParam(result, ApiAiParam.DIFFICULTY)
-                .flatMap(Difficulty::getByName)
-                .ifPresent(requestBuilder::difficulty);
-
-        getRequestParam(result, ApiAiParam.TYPE)
-                .flatMap(QuestionType::getByDescription)
-                .ifPresent(requestBuilder::type);
-
-        val triviaRequest = requestBuilder.build();
         val triviaResponse = getTriviaStrategy().getIntentByName(intentName).apply(triviaRequest);
 
         return webhookResponseFactory.newWebhookResponse(
@@ -66,7 +55,8 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
 
     }
 
-    private TriviaRequestContext createRequestContext(IncompleteResult requestData) {
+    private TriviaRequest createTriviaRequest(IncompleteResult requestData) {
+
         val requestContext = new TriviaRequestContext();
         val contextParams = requestContext.getContextParams();
         Optional.ofNullable(requestData.getContexts())
@@ -80,7 +70,15 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
                     contextParams.put(QUESTION_TEXT, params.get(QUESTION_TEXT.name()));
                 });
 
-        return requestContext;
+        val requestBuilder = TriviaRequest.builder()
+                .requestContext(requestContext);
+        getRequestParam(requestData, ApiAiParam.DIFFICULTY)
+                .flatMap(Difficulty::getByName)
+                .ifPresent(requestBuilder::difficulty);
+        getRequestParam(requestData, ApiAiParam.TYPE)
+                .flatMap(QuestionType::getByDescription)
+                .ifPresent(requestBuilder::type);
+        return requestBuilder.build();
     }
 
     private Set<RequestContext> createContextOut(TriviaResponse response) {
