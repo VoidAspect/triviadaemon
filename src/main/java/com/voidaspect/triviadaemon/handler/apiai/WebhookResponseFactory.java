@@ -17,8 +17,9 @@ final class WebhookResponseFactory {
     /**
      * Method for creating the webhook response with text and speech
      *
-     * @param speech the output to be spoken
-     * @param text   the text to be displayed
+     * @param speech         the output to be spoken
+     * @param text           the text to be displayed
+     * @param contextObjects dialog context created by webhook
      * @return SpeechletResponse the speechlet response
      */
     WebhookResponse newWebhookResponse(String speech, String text, Set<RequestContext> contextObjects) {
