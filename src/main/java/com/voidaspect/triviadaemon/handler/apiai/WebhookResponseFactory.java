@@ -12,7 +12,7 @@ import java.util.Set;
  */
 final class WebhookResponseFactory {
 
-    private static final String SOURCE = "Trivia Daemon";
+    private static final String SOURCE = "opentdb.com";
 
     /**
      * Method for creating the webhook response with text and speech
