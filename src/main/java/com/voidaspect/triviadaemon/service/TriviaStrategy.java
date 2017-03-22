@@ -2,7 +2,6 @@ package com.voidaspect.triviadaemon.service;
 
 import com.voidaspect.triviadaemon.dialog.ASKTitle;
 import com.voidaspect.triviadaemon.dialog.Phrase;
-import com.voidaspect.triviadaemon.service.data.CorrectAnswer;
 import com.voidaspect.triviadaemon.service.data.TriviaRequest;
 import com.voidaspect.triviadaemon.service.data.TriviaRequestContext;
 import com.voidaspect.triviadaemon.service.data.TriviaResponse;

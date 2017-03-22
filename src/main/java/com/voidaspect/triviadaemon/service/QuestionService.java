@@ -64,9 +64,7 @@ final class QuestionService implements Function<QuestionRequest, TriviaResponse>
 
     @Override
     public TriviaResponse apply(QuestionRequest request) {
-
         /* Create HTTP Request */
-
         /* defaults */
         val httpUrlBuilder = new HttpUrl.Builder()
                 .scheme(SCHEME)

@@ -10,14 +10,16 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author mikhail.h
  */
 @Slf4j
 public class TriviaWebhookRequestHandlerTest {
+
+    private final TriviaWebhookRequestHandler handler =
+            new TriviaWebhookRequestHandler();
 
     @Test
     public void testHandleRequest() throws Exception {
@@ -29,8 +31,6 @@ public class TriviaWebhookRequestHandlerTest {
         val webhookRequest = new WebhookRequest();
         webhookRequest.setResult(result);
 
-        val handler = new TriviaWebhookRequestHandler();
-
         val webhookResponse = handler.handleRequest(webhookRequest, new MockContext());
 
         String textOut = "Sorry, I don't remember last question.";
@@ -39,6 +39,28 @@ public class TriviaWebhookRequestHandlerTest {
         assertEquals(textOut, webhookResponse.getDisplayText());
         assertEquals("opentdb.com", webhookResponse.getSource());
         assertTrue(webhookResponse.getContextOut().isEmpty());
+
+
+    }
+
+    @Test
+    public void testQuestionRequest() throws Exception {
+
+        Map<String, String> meta = new HashMap<>();
+        meta.put("intentName", "question.request");
+        Map<String, String> params = new HashMap<>();
+        val result = new IncompleteResult();
+        result.setMetadata(meta);
+        result.setParameters(params);
+        val webhookRequest = new WebhookRequest();
+        webhookRequest.setResult(result);
+
+        val webhookResponse = handler.handleRequest(webhookRequest, new MockContext());
+
+        assertNotNull(webhookResponse.getSpeech());
+        assertNotNull(webhookResponse.getDisplayText());
+        assertEquals("opentdb.com", webhookResponse.getSource());
+        assertFalse(webhookResponse.getContextOut().isEmpty());
 
 
     }
