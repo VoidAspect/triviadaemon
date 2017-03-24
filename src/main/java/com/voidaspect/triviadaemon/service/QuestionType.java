@@ -15,9 +15,7 @@ public enum QuestionType {
 
     MULTIPLE("multiple", "Multiple choice"),
 
-    BOOLEAN("boolean", "True or False"),
-
-    UNKNOWN("unknown", "Unknown");
+    BOOLEAN("boolean", "True or False");
 
     private final String name;
 
@@ -31,8 +29,7 @@ public enum QuestionType {
 
     public static Optional<QuestionType> getByDescription(String description) {
         return Arrays.stream(values())
-                .filter(questionType -> questionType != UNKNOWN &&
-                        questionType.description.equalsIgnoreCase(description))
+                .filter(questionType -> questionType.description.equalsIgnoreCase(description))
                 .findAny();
     }
 
