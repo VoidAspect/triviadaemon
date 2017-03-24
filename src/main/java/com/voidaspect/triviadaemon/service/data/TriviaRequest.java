@@ -9,7 +9,7 @@ import lombok.Value;
  */
 @Value
 @Builder
-public final class TriviaRequest {
+public class TriviaRequest {
 
     @NonNull
     QuestionRequest question;

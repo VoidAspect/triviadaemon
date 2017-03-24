@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 @Value
 @Builder
-public final class TriviaResponse {
+public class TriviaResponse {
 
     @NonNull
     String title;

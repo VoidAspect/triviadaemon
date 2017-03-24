@@ -7,7 +7,7 @@ import lombok.Value;
  * @author mikhail.h
  */
 @Value
-public final class CorrectAnswer {
+public class CorrectAnswer {
 
     @NonNull
     String answerDescription;

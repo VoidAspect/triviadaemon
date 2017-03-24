@@ -9,7 +9,7 @@ import java.util.Map;
  * @author mikhail.h
  */
 @Value
-public final class TriviaRequestContext {
+public class TriviaRequestContext {
 
     public enum ContextParam {
         QUESTION_SPEECH, QUESTION_TEXT, CORRECT_ANSWER, CORRECT_ANSWER_PLAIN

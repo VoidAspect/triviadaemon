@@ -10,7 +10,7 @@ import lombok.Value;
  */
 @Value
 @Builder
-public final class QuestionRequest {
+public class QuestionRequest {
 
     Difficulty difficulty;
 
