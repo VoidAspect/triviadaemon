@@ -8,6 +8,7 @@ import com.voidaspect.triviadaemon.service.*;
 import com.voidaspect.triviadaemon.service.data.*;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.*;
@@ -18,6 +19,7 @@ import static com.voidaspect.triviadaemon.service.data.TriviaRequestContext.Cont
 /**
  * @author mikhail.h
  */
+@Slf4j
 final class TriviaWebhookService implements Function<WebhookRequest, WebhookResponse> {
 
     /**
@@ -46,6 +48,8 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
         val intentName = result.getMetadata().get(INTENT_NAME_KEY);
 
         val triviaRequest = createTriviaRequest(result);
+
+        log.debug("TriviaRequest: {}", triviaRequest);
 
         val triviaResponse = getTriviaStrategy()
                 .getIntentByName(intentName)

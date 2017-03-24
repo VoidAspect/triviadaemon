@@ -60,11 +60,20 @@ final class TriviaSpeechlet implements SpeechletV2 {
 
         val triviaRequest = createTriviaRequest(session, intent);
 
+        log.debug("TriviaRequest: {}", triviaRequest);
+
         val response = getTriviaStrategy()
                 .getIntentByName(intent.getName())
                 .apply(triviaRequest);
 
         return createSpeechletResponse(session, response);
+    }
+
+    @Override
+    public void onSessionEnded(SpeechletRequestEnvelope<SessionEndedRequest> requestEnvelope) {
+        log.info("onSessionEnded requestId={}, sessionId={}",
+                requestEnvelope.getRequest().getRequestId(),
+                requestEnvelope.getSession().getSessionId());
     }
 
     private SpeechletResponse createSpeechletResponse(Session session, TriviaResponse response) {
@@ -120,13 +129,6 @@ final class TriviaSpeechlet implements SpeechletV2 {
                 .question(questionRequestBuilder.build())
                 .guessRequest(new GuessRequest(userInput))
                 .build();
-    }
-
-    @Override
-    public void onSessionEnded(SpeechletRequestEnvelope<SessionEndedRequest> requestEnvelope) {
-        log.info("onSessionEnded requestId={}, sessionId={}",
-                requestEnvelope.getRequest().getRequestId(),
-                requestEnvelope.getSession().getSessionId());
     }
 
     private Optional<String> getSlotValue(Intent intent, ASKSlot askSlot) {
