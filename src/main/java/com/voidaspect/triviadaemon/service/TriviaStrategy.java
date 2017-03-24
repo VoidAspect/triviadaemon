@@ -23,7 +23,7 @@ import static java.util.Collections.unmodifiableSet;
  */
 public final class TriviaStrategy {
 
-    public TriviaIntent getIntentByName(String name) {
+    public Function<TriviaRequest, TriviaResponse> getIntentByName(String name) {
         return Arrays.stream(TriviaIntent.values())
                 .filter(triviaIntent -> triviaIntent.names.contains(name))
                 .findAny()

@@ -15,11 +15,12 @@ import java.util.stream.Collectors;
 /**
  * @author mikhail.h
  */
+@SuppressWarnings("WeakerAccess")
 @Slf4j
 public final class TriviaSpeechletRequestStreamHandler extends SpeechletRequestStreamHandler {
 
     /**
-     * Immutable set of Application IDs supported by Dockee skill.
+     * Immutable set of Application IDs supported by Trivia Demon skill.
      */
     public static final Set<String> SUPPORTED_APPLICATION_IDS;
 
