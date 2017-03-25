@@ -10,14 +10,23 @@ import lombok.val;
 import java.util.function.Function;
 
 /**
+ * AWS Lambda handler for webhook used by api.ai agent.
+ *
  * @author mikhail.h
  */
 @Slf4j
 public final class TriviaWebhookRequestHandler implements RequestHandler<WebhookRequest, WebhookResponse> {
 
+    /**
+     * Functional service responsible for converting requests into responses.
+     * @see TriviaWebhookService
+     */
     private final Function<WebhookRequest, WebhookResponse> webhookFunction =
             new TriviaWebhookService();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public WebhookResponse handleRequest(WebhookRequest input, Context context) {
         log.info("api.ai webhook request: {}", input);

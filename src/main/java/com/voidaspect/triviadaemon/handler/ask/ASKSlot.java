@@ -22,12 +22,14 @@ enum ASKSlot {
 
     /**
      * Type of the question. Can be "true or false" or "multiple choice".
+     *
+     * @see com.voidaspect.triviadaemon.service.data.QuestionType
      */
     TYPE("Type"),
 
     /**
      * Number of the answer for multi-choice questions.
-     * Can be any integer, but correct one is always 1 to 4.
+     * Can be any integer, but correct one is always in range of 1 to 4 (inclusive).
      */
     NUMBER("Number"),
 
