@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.text.Format;
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -186,8 +187,6 @@ final class QuestionService implements Function<QuestionRequest, TriviaResponse>
     @Value
     private static class Question {
 
-        private static final String RESPONSE_ENCODING = "UTF-8";
-
         String category;
 
         String type;
@@ -219,7 +218,7 @@ final class QuestionService implements Function<QuestionRequest, TriviaResponse>
 
         @SneakyThrows(UnsupportedEncodingException.class)
         private static String decode(String s) {
-            return URLDecoder.decode(s, RESPONSE_ENCODING);
+            return URLDecoder.decode(s, StandardCharsets.UTF_8.displayName());
         }
     }
 
