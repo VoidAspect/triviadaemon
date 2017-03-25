@@ -35,12 +35,11 @@ public final class TriviaStrategy {
         QUESTION(names("QuestionIntent", "question.request"),
                 new QuestionService().compose(TriviaRequest::getQuestion)),
 
-        ANSWER(names("AnswerIntent", "question.answer"),
-                request -> TriviaResponse.builder()
-                        .isTerminal(false)
-                        .title(ASKTitle.CORRECT_ANSWER.get())
-                        .speech(getContextParam(request, CORRECT_ANSWER))
-                        .build()),
+        ANSWER("AnswerIntent", request -> TriviaResponse.builder()
+                .isTerminal(false)
+                .title(ASKTitle.CORRECT_ANSWER.get())
+                .speech(getContextParam(request, CORRECT_ANSWER))
+                .build()),
 
         GUESS(names("GuessIntent", "question.guess"), request -> {
             val userGuess = request.getGuessRequest();
@@ -67,27 +66,24 @@ public final class TriviaStrategy {
                     .build();
         }),
 
-        HELP("AMAZON.HelpIntent",
-                request -> TriviaResponse.builder()
-                        .isTerminal(true)
-                        .title(ASKTitle.HELP.get())
-                        .speech(HELP_MESSAGE.get())
-                        .build()),
+        HELP("AMAZON.HelpIntent", request -> TriviaResponse.builder()
+                .isTerminal(true)
+                .title(ASKTitle.HELP.get())
+                .speech(HELP_MESSAGE.get())
+                .build()),
 
-        REPEAT(names("AMAZON.RepeatIntent", "question.repeat"),
-                request -> TriviaResponse.builder()
-                        .isTerminal(false)
-                        .speech(getContextParam(request, QUESTION_SPEECH))
-                        .text(getContextParam(request, QUESTION_TEXT))
-                        .title(ASKTitle.PREVIOUS_QUESTION.get())
-                        .build()),
+        REPEAT("AMAZON.RepeatIntent", request -> TriviaResponse.builder()
+                .isTerminal(false)
+                .speech(getContextParam(request, QUESTION_SPEECH))
+                .text(getContextParam(request, QUESTION_TEXT))
+                .title(ASKTitle.PREVIOUS_QUESTION.get())
+                .build()),
 
-        STOP("AMAZON.StopIntent",
-                request -> TriviaResponse.builder()
-                        .isTerminal(true)
-                        .speech(GOODBYE.get())
-                        .title(ASKTitle.EXIT.get())
-                        .build()),
+        STOP("AMAZON.StopIntent", request -> TriviaResponse.builder()
+                .isTerminal(true)
+                .speech(GOODBYE.get())
+                .title(ASKTitle.EXIT.get())
+                .build()),
 
         CANCEL("AMAZON.CancelIntent", STOP.function);
 

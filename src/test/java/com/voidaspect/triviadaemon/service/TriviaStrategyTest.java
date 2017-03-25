@@ -17,15 +17,11 @@ public class TriviaStrategyTest {
         assertIntentHasName(QUESTION, "QuestionIntent");
         assertIntentHasName(QUESTION, "question.request");
 
-        assertIntentHasName(ANSWER, "AnswerIntent");
-        assertIntentHasName(ANSWER, "question.answer");
-
-        assertIntentHasName(REPEAT, "AMAZON.RepeatIntent");
-        assertIntentHasName(REPEAT, "question.repeat");
-
         assertIntentHasName(GUESS, "GuessIntent");
         assertIntentHasName(GUESS, "question.guess");
 
+        assertIntentHasName(ANSWER, "AnswerIntent");
+        assertIntentHasName(REPEAT, "AMAZON.RepeatIntent");
         assertIntentHasName(HELP, "AMAZON.HelpIntent");
         assertIntentHasName(STOP, "AMAZON.StopIntent");
         assertIntentHasName(CANCEL, "AMAZON.CancelIntent");

@@ -22,25 +22,6 @@ public class TriviaWebhookRequestHandlerTest {
             new TriviaWebhookRequestHandler();
 
     @Test
-    public void testHandleRequest() throws Exception {
-        Map<String, String> meta = new HashMap<>();
-        meta.put("intentName", "question.answer");
-        val result = new IncompleteResult();
-        result.setMetadata(meta);
-        val webhookRequest = new WebhookRequest();
-        webhookRequest.setResult(result);
-
-        val webhookResponse = handler.handleRequest(webhookRequest, new MockContext());
-
-        String textOut = "Sorry, I don't remember last question.";
-
-        assertEquals(textOut, webhookResponse.getSpeech());
-        assertEquals(textOut, webhookResponse.getDisplayText());
-        assertEquals("opentdb.com", webhookResponse.getSource());
-        assertTrue(webhookResponse.getContextOut().isEmpty());
-    }
-
-    @Test
     public void testQuestionRequest() throws Exception {
         Map<String, String> meta = new HashMap<>();
         meta.put("intentName", "question.request");
