@@ -27,7 +27,7 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
      */
     private static final String INTENT_NAME_KEY = "intentName";
 
-    private static final String RECENT_QUESTION_CONTEXT_NAME = "RecentQuestion";
+    private static final String RECENT_QUESTION_CONTEXT_NAME = "recent-question";
 
     @Getter(value = AccessLevel.PRIVATE, lazy = true)
     private final TriviaStrategy triviaStrategy = new TriviaStrategy();
@@ -65,7 +65,8 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
         Optional.ofNullable(requestData.getContexts())
                 .orElseGet(Collections::emptySet)
                 .stream()
-                .findFirst()
+                .filter(context -> context.getName().equalsIgnoreCase(RECENT_QUESTION_CONTEXT_NAME))
+                .findAny()
                 .map(RequestContext::getParameters)
                 .ifPresent(params -> {
                     contextParams.put(CORRECT_ANSWER, params.get(CORRECT_ANSWER.name()));
@@ -111,6 +112,7 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
             RequestContext contextOut = new RequestContext();
             contextOut.setName(RECENT_QUESTION_CONTEXT_NAME);
             contextOut.setParameters(contextOutParams);
+            contextOut.setLifespan(5);
 
             requestContexts = Collections.singleton(contextOut);
         } else {

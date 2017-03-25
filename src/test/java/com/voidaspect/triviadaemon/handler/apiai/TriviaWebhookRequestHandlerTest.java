@@ -45,6 +45,7 @@ public class TriviaWebhookRequestHandlerTest {
         Map<String, String> meta = new HashMap<>();
         meta.put("intentName", "question.request");
         Map<String, String> params = new HashMap<>();
+        params.put("type", "true or false");
         val result = new IncompleteResult();
         result.setMetadata(meta);
         result.setParameters(params);

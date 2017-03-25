@@ -10,13 +10,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ApiAiParam {
 
-    DIFFICULTY("Difficulty"),
+    DIFFICULTY("difficulty"),
 
-    TYPE("Type"),
+    TYPE("type"),
 
-    NUMBER("Number"),
+    NUMBER("number"),
 
-    BOOLEAN("Boolean");
+    BOOLEAN("boolean");
 
     private final String paramName;
 
