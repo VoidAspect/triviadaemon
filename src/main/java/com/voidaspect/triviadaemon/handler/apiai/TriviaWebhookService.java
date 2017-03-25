@@ -65,7 +65,7 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
         Optional.ofNullable(requestData.getContexts())
                 .orElseGet(Collections::emptySet)
                 .stream()
-                .filter(context -> context.getName().equalsIgnoreCase(RECENT_QUESTION_CONTEXT_NAME))
+                .filter(context -> context.getName().equals(RECENT_QUESTION_CONTEXT_NAME))
                 .findAny()
                 .map(RequestContext::getParameters)
                 .ifPresent(params -> {
