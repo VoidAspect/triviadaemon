@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Bean for TriviaWebhook responses.
+ *
  * @author mikhail.h
  */
 @Data

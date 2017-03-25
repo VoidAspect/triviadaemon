@@ -5,6 +5,8 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
+ * Bean for TriviaWebhook requests.
+ *
  * @author mikhail.h
  */
 @Data

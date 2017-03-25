@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Bean for data about user intent passed by api.ai agent to webhook
+ *
  * @author mikhail.h
  */
 @Data

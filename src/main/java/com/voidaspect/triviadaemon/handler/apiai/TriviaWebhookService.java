@@ -49,6 +49,12 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
      */
     private final WebhookResponseFactory webhookResponseFactory = new WebhookResponseFactory();
 
+    /**
+     * Converts {@link WebhookRequest} => {@link WebhookResponse}
+     *
+     * @param webhookRequest {@code WebhookRequest} bean
+     * @return {@code WebhookResponse} bean
+     */
     @Override
     public WebhookResponse apply(WebhookRequest webhookRequest) {
 
@@ -74,6 +80,12 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
 
     }
 
+    /**
+     * Converts {@link IncompleteResult} => {@link TriviaRequest}.
+     *
+     * @param requestData {@link IncompleteResult} bean.
+     * @return {@link TriviaRequest} value-object.
+     */
     private TriviaRequest createTriviaRequest(IncompleteResult requestData) {
         val requestContext = new TriviaRequestContext();
         val contextParams = requestContext.getContextParams();
@@ -111,6 +123,12 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
                 .build();
     }
 
+    /**
+     * Converts {@link TriviaResponse} => {@link WebhookResponse}.
+     *
+     * @param triviaResponse {@link TriviaResponse} value-object
+     * @return {@link WebhookResponse} bean.
+     */
     private WebhookResponse createWebhookResponse(TriviaResponse triviaResponse) {
         val text = triviaResponse.getText();
         val speech = triviaResponse.getSpeech();
@@ -137,6 +155,13 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
         return webhookResponseFactory.newWebhookResponse(speech, text, requestContexts);
     }
 
+    /**
+     * Utility method for null-safe retrieval of request parameters.
+     *
+     * @param requestData dto with request data.
+     * @param param       parameter to retrieve.
+     * @return optional-wrapped parameter value.
+     */
     private Optional<String> getRequestParam(IncompleteResult requestData, ApiAiParam param) {
         return Optional.ofNullable(requestData.getParameters())
                 .map(params -> params.get(param.getParamName()));
