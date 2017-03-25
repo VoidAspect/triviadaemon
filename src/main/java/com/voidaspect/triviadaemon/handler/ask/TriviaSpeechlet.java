@@ -20,17 +20,29 @@ import java.util.Set;
 import static com.voidaspect.triviadaemon.service.data.TriviaRequestContext.ContextParam.*;
 
 /**
+ * This class represents a speech-enabled web service that runs on AWS Lambda.
+ * <br>This {@link SpeechletV2} implementation enables user to request and answer questions
+ * from opentdb.com
+ *
  * @author mikhail.h
  */
 @Slf4j
 final class TriviaSpeechlet implements SpeechletV2 {
 
+    /**
+     * {@link SpeechletResponseFactory} instance.
+     */
     private final SpeechletResponseFactory responseFactory =
             new SpeechletResponseFactory();
-
+    /**
+     * {@link TriviaService} instance with lazy getter.
+     */
     @Getter(value = AccessLevel.PRIVATE, lazy = true)
     private final TriviaService triviaService = new TriviaService();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onSessionStarted(SpeechletRequestEnvelope<SessionStartedRequest> requestEnvelope) {
         log.info("onSessionStarted requestId={}, sessionId={}",
@@ -38,6 +50,9 @@ final class TriviaSpeechlet implements SpeechletV2 {
                 requestEnvelope.getSession().getSessionId());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SpeechletResponse onLaunch(SpeechletRequestEnvelope<LaunchRequest> requestEnvelope) {
         log.info("onLaunch requestId={}, sessionId={}",
@@ -49,6 +64,9 @@ final class TriviaSpeechlet implements SpeechletV2 {
                 ASKTitle.WELCOME);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SpeechletResponse onIntent(SpeechletRequestEnvelope<IntentRequest> requestEnvelope) {
         val request = requestEnvelope.getRequest();
@@ -69,6 +87,9 @@ final class TriviaSpeechlet implements SpeechletV2 {
         return createSpeechletResponse(session, response);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onSessionEnded(SpeechletRequestEnvelope<SessionEndedRequest> requestEnvelope) {
         log.info("onSessionEnded requestId={}, sessionId={}",
@@ -76,31 +97,13 @@ final class TriviaSpeechlet implements SpeechletV2 {
                 requestEnvelope.getSession().getSessionId());
     }
 
-    private SpeechletResponse createSpeechletResponse(Session session, TriviaResponse response) {
-        val text = response.getText();
-        val speech = response.getSpeech();
-
-        val correctAnswer = response.getCorrectAnswer();
-        if (correctAnswer != null) {
-            session.setAttribute(CORRECT_ANSWER.name(), correctAnswer.getAnswerDescription());
-            session.setAttribute(CORRECT_ANSWER_PLAIN.name(), correctAnswer.getAnswerPlain());
-            session.setAttribute(QUESTION_SPEECH.name(), speech);
-            session.setAttribute(QUESTION_TEXT.name(), text);
-        }
-
-        val title = response.getTitle();
-
-        final SpeechletResponse speechletResponse;
-        if (response.isTerminal()) {
-            speechletResponse = responseFactory
-                    .newTellResponse(speech, text, title);
-        } else {
-            speechletResponse = responseFactory
-                    .newAskResponse(speech, Phrase.REPROMPT.get(), text, title);
-        }
-        return speechletResponse;
-    }
-
+    /**
+     * Creates {@link TriviaRequest} objects from {@link Intent} and {@link Session} parameters.
+     *
+     * @param session dialog session with context parameters.
+     * @param intent  user's intent with slots.
+     * @return {@link TriviaRequest} value-object.
+     */
     private TriviaRequest createTriviaRequest(Session session, Intent intent) {
         val requestContext = new TriviaRequestContext();
         val contextParams = requestContext.getContextParams();
@@ -131,6 +134,46 @@ final class TriviaSpeechlet implements SpeechletV2 {
                 .build();
     }
 
+    /**
+     * Creates {@link SpeechletResponse} objects from {@link TriviaResponse} and,
+     * if needed, saves the recently generated question data into {@link Session}.
+     *
+     * @param session  dialog session
+     * @param response {@link #triviaService} response.
+     * @return {@link SpeechletResponse} object.
+     */
+    private SpeechletResponse createSpeechletResponse(Session session, TriviaResponse response) {
+        val text = response.getText();
+        val speech = response.getSpeech();
+
+        val correctAnswer = response.getCorrectAnswer();
+        if (correctAnswer != null) {
+            session.setAttribute(CORRECT_ANSWER.name(), correctAnswer.getAnswerDescription());
+            session.setAttribute(CORRECT_ANSWER_PLAIN.name(), correctAnswer.getAnswerPlain());
+            session.setAttribute(QUESTION_SPEECH.name(), speech);
+            session.setAttribute(QUESTION_TEXT.name(), text);
+        }
+
+        val title = response.getTitle();
+
+        final SpeechletResponse speechletResponse;
+        if (response.isTerminal()) {
+            speechletResponse = responseFactory
+                    .newTellResponse(speech, text, title);
+        } else {
+            speechletResponse = responseFactory
+                    .newAskResponse(speech, Phrase.REPROMPT.get(), text, title);
+        }
+        return speechletResponse;
+    }
+
+    /**
+     * Utility method for null-safe retrieval of {@link Slot#getValue()}
+     *
+     * @param intent  intent from {@link IntentRequest}.
+     * @param askSlot {@link ASKSlot} type.
+     * @return optional of slot value
+     */
     private Optional<String> getSlotValue(Intent intent, ASKSlot askSlot) {
         return Optional.ofNullable(intent.getSlot(askSlot.getSlotName()))
                 .map(Slot::getValue);

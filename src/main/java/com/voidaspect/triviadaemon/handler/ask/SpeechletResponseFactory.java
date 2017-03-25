@@ -18,7 +18,7 @@ final class SpeechletResponseFactory {
 
     /**
      * Method for creating the Ask response. The OutputSpeech and {@link Reprompt} objects are
-     * created from the input strings.
+     * created from the input {@link Phrase} objects.
      *
      * @param output    the output to be spoken
      * @param reprompt  the reprompt for if the user doesn't reply or is misunderstood.

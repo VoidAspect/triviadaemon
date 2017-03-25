@@ -13,6 +13,7 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -214,9 +215,12 @@ final class QuestionService implements Function<QuestionRequest, TriviaResponse>
                     .collect(Collectors.toList());
         }
 
-        @SneakyThrows(UnsupportedEncodingException.class)
         private static String decode(String s) {
-            return URLDecoder.decode(s, StandardCharsets.UTF_8.displayName());
+            try {
+                return URLDecoder.decode(s, StandardCharsets.UTF_8.displayName());
+            } catch (UnsupportedEncodingException e) {
+                throw new UncheckedIOException(e);
+            }
         }
     }
 

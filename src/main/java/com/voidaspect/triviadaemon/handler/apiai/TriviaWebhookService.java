@@ -17,6 +17,12 @@ import java.util.function.Function;
 import static com.voidaspect.triviadaemon.service.data.TriviaRequestContext.ContextParam.*;
 
 /**
+ * Validates the webhook request.
+ * <br>Converts {@link WebhookRequest}
+ * => {@link TriviaRequest}
+ * => {@link TriviaResponse}
+ * => {@link WebhookResponse}.
+ *
  * @author mikhail.h
  */
 @Slf4j
@@ -27,11 +33,20 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
      */
     private static final String INTENT_NAME_KEY = "intentName";
 
+    /**
+     * Name of the {@link RequestContext} with information about current quiz.
+     */
     private static final String RECENT_QUESTION_CONTEXT_NAME = "recent-question";
 
+    /**
+     * {@link TriviaService} instance with lazy getter.
+     */
     @Getter(value = AccessLevel.PRIVATE, lazy = true)
     private final TriviaService triviaService = new TriviaService();
 
+    /**
+     * {@link WebhookResponseFactory} instance.
+     */
     private final WebhookResponseFactory webhookResponseFactory = new WebhookResponseFactory();
 
     @Override

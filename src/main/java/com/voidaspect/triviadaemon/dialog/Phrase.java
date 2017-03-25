@@ -3,6 +3,9 @@ package com.voidaspect.triviadaemon.dialog;
 import lombok.RequiredArgsConstructor;
 
 /**
+ * Represents a set of phrases used by Trivia Daemon device to interact with user.
+ * <br>Covers questions, prompts, help messages etc.
+ *
  * @author mikhail.h
  */
 @RequiredArgsConstructor

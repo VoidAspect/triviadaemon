@@ -13,6 +13,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ * This class implements the handler required for hosting the service as an AWS Lambda function.
+ * <p>When configuring your Lambda function in the AWS Lambda console, specify this class as the
+ * <strong>Handler</strong>.
+ *
  * @author mikhail.h
  */
 @SuppressWarnings("WeakerAccess")

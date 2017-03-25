@@ -12,6 +12,9 @@ import java.util.Set;
  */
 final class WebhookResponseFactory {
 
+    /**
+     * Value of "source" field in response object
+     */
     private static final String SOURCE = "opentdb.com";
 
     /**
