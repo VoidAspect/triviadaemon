@@ -71,6 +71,11 @@ public enum Phrase {
      */
     private final String[] textSnippets;
 
+    /**
+     * Constructor for {@link Phrase}.
+     *
+     * @param textSnippets {@link #textSnippets}
+     */
     Phrase(String... textSnippets) {
         this.textSnippets = textSnippets;
     }
