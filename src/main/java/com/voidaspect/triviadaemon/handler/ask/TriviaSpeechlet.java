@@ -29,7 +29,7 @@ final class TriviaSpeechlet implements SpeechletV2 {
             new SpeechletResponseFactory();
 
     @Getter(value = AccessLevel.PRIVATE, lazy = true)
-    private final TriviaStrategy triviaStrategy = new TriviaStrategy();
+    private final TriviaService triviaService = new TriviaService();
 
     @Override
     public void onSessionStarted(SpeechletRequestEnvelope<SessionStartedRequest> requestEnvelope) {
@@ -62,7 +62,7 @@ final class TriviaSpeechlet implements SpeechletV2 {
 
         log.debug("TriviaRequest: {}", triviaRequest);
 
-        val response = getTriviaStrategy()
+        val response = getTriviaService()
                 .getIntentByName(intent.getName())
                 .apply(triviaRequest);
 

@@ -30,7 +30,7 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
     private static final String RECENT_QUESTION_CONTEXT_NAME = "recent-question";
 
     @Getter(value = AccessLevel.PRIVATE, lazy = true)
-    private final TriviaStrategy triviaStrategy = new TriviaStrategy();
+    private final TriviaService triviaService = new TriviaService();
 
     private final WebhookResponseFactory webhookResponseFactory = new WebhookResponseFactory();
 
@@ -51,7 +51,7 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
 
         log.debug("TriviaRequest: {}", triviaRequest);
 
-        val triviaResponse = getTriviaStrategy()
+        val triviaResponse = getTriviaService()
                 .getIntentByName(intentName)
                 .apply(triviaRequest);
 
