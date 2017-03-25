@@ -1,6 +1,8 @@
 package com.voidaspect.triviadaemon.service;
 
+import com.voidaspect.triviadaemon.service.data.Difficulty;
 import com.voidaspect.triviadaemon.service.data.QuestionRequest;
+import com.voidaspect.triviadaemon.service.data.QuestionType;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;

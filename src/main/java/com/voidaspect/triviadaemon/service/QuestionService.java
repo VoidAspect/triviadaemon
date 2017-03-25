@@ -8,9 +8,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.voidaspect.triviadaemon.dialog.ASKTitle;
 import com.voidaspect.triviadaemon.dialog.Phrase;
-import com.voidaspect.triviadaemon.service.data.CorrectAnswer;
-import com.voidaspect.triviadaemon.service.data.QuestionRequest;
-import com.voidaspect.triviadaemon.service.data.TriviaResponse;
+import com.voidaspect.triviadaemon.service.data.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
