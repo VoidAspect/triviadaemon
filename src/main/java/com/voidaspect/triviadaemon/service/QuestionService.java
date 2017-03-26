@@ -107,9 +107,10 @@ final class QuestionService implements Function<QuestionRequest, TriviaResponse>
                 answerText = answer;
 
                 val answerList = new ArrayList<String>();
-                result.get("incorrect_answers")
-                        .forEach(e -> answerList.add(decode(e)));
                 answerList.add(answer);
+                for (val node : result.get("incorrect_answers")) {
+                    answerList.add(decode(node));
+                }
                 Collections.shuffle(answerList, new Random());
 
                 answerPlain = String.valueOf(answerList.indexOf(answer) + 1);
