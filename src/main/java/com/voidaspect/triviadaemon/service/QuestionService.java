@@ -184,7 +184,7 @@ final class QuestionService implements Function<QuestionRequest, TriviaResponse>
             throw new IllegalArgumentException("Attempt to decode non-textual node");
         }
         try {
-            return URLDecoder.decode(node.asText(), StandardCharsets.UTF_8.displayName());
+            return URLDecoder.decode(node.textValue(), StandardCharsets.UTF_8.displayName());
         } catch (UnsupportedEncodingException e) {
             throw new UncheckedIOException(e);
         }
