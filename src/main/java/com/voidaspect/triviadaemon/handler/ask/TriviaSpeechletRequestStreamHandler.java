@@ -42,7 +42,7 @@ public final class TriviaSpeechletRequestStreamHandler extends SpeechletRequestS
                     .collect(Collectors.toSet()));
         } catch (IOException | URISyntaxException e) {
             log.error("Cannot load app-ids.txt", e);
-            throw new RuntimeException("Jar is corrupted: cannot load app-ids.txt", e);
+            throw new ExceptionInInitializerError(e);
         }
     }
 
