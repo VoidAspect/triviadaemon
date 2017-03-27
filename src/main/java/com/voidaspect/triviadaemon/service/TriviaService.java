@@ -116,7 +116,7 @@ public final class TriviaService {
         getContextParam(TriviaRequest request, TriviaRequestContext.ContextParam cp) {
             val param = request.getRequestContext().getContextParams().get(cp);
             return Optional.ofNullable(param)
-                    .orElse(NO_QUESTION.get());
+                    .orElseGet(NO_QUESTION);
         }
 
     }

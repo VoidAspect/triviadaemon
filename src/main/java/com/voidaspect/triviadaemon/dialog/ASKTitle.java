@@ -2,13 +2,15 @@ package com.voidaspect.triviadaemon.dialog;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.function.Supplier;
+
 /**
  * Represents a set of phrases used as {@link com.amazon.speech.ui.Card#setTitle} param.
  *
  * @author mikhail.h
  */
 @RequiredArgsConstructor
-public enum ASKTitle {
+public enum ASKTitle implements Supplier<String> {
 
     WELCOME("Welcome!"),
 

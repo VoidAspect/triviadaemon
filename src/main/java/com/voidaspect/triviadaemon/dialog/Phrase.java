@@ -1,6 +1,7 @@
 package com.voidaspect.triviadaemon.dialog;
 
 import java.util.Random;
+import java.util.function.Supplier;
 
 /**
  * Represents a set of phrases used by Trivia Daemon device to interact with user.
@@ -9,7 +10,7 @@ import java.util.Random;
  *
  * @author mikhail.h
  */
-public enum Phrase {
+public enum Phrase implements Supplier<String> {
 
     /**
      * Help message.
