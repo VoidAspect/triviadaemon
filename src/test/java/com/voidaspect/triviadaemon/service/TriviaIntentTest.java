@@ -2,15 +2,13 @@ package com.voidaspect.triviadaemon.service;
 
 import org.junit.Test;
 
-import static com.voidaspect.triviadaemon.service.TriviaService.TriviaIntent.*;
+import static com.voidaspect.triviadaemon.service.TriviaIntent.*;
 import static org.junit.Assert.*;
 
 /**
  * @author miwag.
  */
-public class TriviaServiceTest {
-
-//    private final TriviaService triviaService = new TriviaService(new QuestionService());
+public class TriviaIntentTest {
 
     @Test
     public void testGetIntentByName() throws Exception {
@@ -27,9 +25,10 @@ public class TriviaServiceTest {
         assertIntentHasName(CANCEL, "AMAZON.CancelIntent");
     }
 
-    private void assertIntentHasName(TriviaService.TriviaIntent intent, String name) {
-        assertTrue("Intent doesn't support the given name: " + name,
-                intent.getNames().contains(name));
+    private void assertIntentHasName(TriviaIntent intent, String name) {
+        assertSame("Intent doesn't support the given name: " + name,
+                intent,
+                TriviaIntent.getByName(name));
     }
 
 }

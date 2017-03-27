@@ -81,7 +81,7 @@ final class TriviaSpeechlet implements SpeechletV2 {
         log.debug("TriviaRequest: {}", triviaRequest);
 
         val response = getTriviaService()
-                .getIntentByName(intent.getName())
+                .getFunctionByIntentName(intent.getName())
                 .apply(triviaRequest);
 
         return createSpeechletResponse(session, response);

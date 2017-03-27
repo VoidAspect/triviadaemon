@@ -6,18 +6,14 @@ import com.voidaspect.triviadaemon.service.data.QuestionRequest;
 import com.voidaspect.triviadaemon.service.data.TriviaRequest;
 import com.voidaspect.triviadaemon.service.data.TriviaRequestContext;
 import com.voidaspect.triviadaemon.service.data.TriviaResponse;
-import lombok.Getter;
 import lombok.val;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.voidaspect.triviadaemon.dialog.Phrase.*;
-import static com.voidaspect.triviadaemon.service.TriviaService.TriviaIntent.*;
+import static com.voidaspect.triviadaemon.service.TriviaIntent.*;
 import static com.voidaspect.triviadaemon.service.data.TriviaRequestContext.ContextParam.*;
-import static java.util.Collections.singleton;
-import static java.util.Collections.unmodifiableSet;
 
 /**
  * @author mikhail.h
@@ -63,11 +59,8 @@ public final class TriviaService {
 
     }
 
-    public Function<TriviaRequest, TriviaResponse> getIntentByName(String name) {
-        val intent = Arrays.stream(TriviaIntent.values())
-                .filter(triviaIntent -> triviaIntent.names.contains(name))
-                .findAny()
-                .orElse(TriviaIntent.HELP);
+    public Function<TriviaRequest, TriviaResponse> getFunctionByIntentName(String name) {
+        val intent = getByName(name);
         return intentMap.get(intent);
     }
 
@@ -101,35 +94,6 @@ public final class TriviaService {
                 .title(title.get())
                 .speech(speech.get())
                 .build();
-    }
-
-    enum TriviaIntent {
-
-        QUESTION("QuestionIntent", "question.request"),
-
-        ANSWER("AnswerIntent"),
-
-        GUESS("GuessIntent", "question.guess"),
-
-        HELP("AMAZON.HelpIntent"),
-
-        REPEAT("AMAZON.RepeatIntent"),
-
-        STOP("AMAZON.StopIntent"),
-
-        CANCEL("AMAZON.CancelIntent");
-
-        @Getter
-        private final Set<String> names;
-
-        TriviaIntent(String name) {
-            this.names = unmodifiableSet(singleton(name));
-        }
-
-        TriviaIntent(String... names) {
-            this.names = unmodifiableSet(Arrays.stream(names).collect(Collectors.toSet()));
-        }
-
     }
 
 }

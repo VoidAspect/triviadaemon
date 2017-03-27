@@ -73,7 +73,7 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
         log.debug("TriviaRequest: {}", triviaRequest);
 
         val triviaResponse = getTriviaService()
-                .getIntentByName(intentName)
+                .getFunctionByIntentName(intentName)
                 .apply(triviaRequest);
 
         return createWebhookResponse(triviaResponse);
