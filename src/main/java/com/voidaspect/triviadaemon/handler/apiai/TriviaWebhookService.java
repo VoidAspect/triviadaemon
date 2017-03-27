@@ -42,7 +42,7 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
      * {@link TriviaService} instance with lazy getter.
      */
     @Getter(value = AccessLevel.PRIVATE, lazy = true)
-    private final TriviaService triviaService = new TriviaService();
+    private final TriviaService triviaService = new TriviaService(new QuestionService());
 
     /**
      * {@link WebhookResponseFactory} instance.

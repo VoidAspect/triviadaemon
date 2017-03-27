@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * @author mikhail.h
  */
 @Slf4j
-final class QuestionService implements Function<QuestionRequest, TriviaResponse> {
+public final class QuestionService implements Function<QuestionRequest, TriviaResponse> {
 
     private static final String QUESTION_LIMIT = String.valueOf(1);
 
@@ -55,7 +55,7 @@ final class QuestionService implements Function<QuestionRequest, TriviaResponse>
 
     private final ObjectMapper objectMapper;
 
-    QuestionService() {
+    public QuestionService() {
         httpClient = new OkHttpClient();
         httpClient.setReadTimeout(3, TimeUnit.SECONDS);
         httpClient.setWriteTimeout(3, TimeUnit.SECONDS);
