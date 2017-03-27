@@ -1,6 +1,8 @@
 package com.voidaspect.triviadaemon.handler.ask;
 
 import com.amazon.speech.speechlet.lambda.SpeechletRequestStreamHandler;
+import com.voidaspect.triviadaemon.service.QuestionService;
+import com.voidaspect.triviadaemon.service.TriviaService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -47,7 +49,7 @@ public final class TriviaSpeechletRequestStreamHandler extends SpeechletRequestS
     }
 
     public TriviaSpeechletRequestStreamHandler() {
-        super(new TriviaSpeechlet(), SUPPORTED_APPLICATION_IDS);
+        super(new TriviaSpeechlet(new TriviaService(new QuestionService())), SUPPORTED_APPLICATION_IDS);
     }
 
 }

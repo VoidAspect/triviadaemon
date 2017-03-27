@@ -6,8 +6,6 @@ import com.voidaspect.triviadaemon.handler.apiai.data.WebhookRequest;
 import com.voidaspect.triviadaemon.handler.apiai.data.WebhookResponse;
 import com.voidaspect.triviadaemon.service.*;
 import com.voidaspect.triviadaemon.service.data.*;
-import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -39,15 +37,19 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
     private static final String RECENT_QUESTION_CONTEXT_NAME = "recent-question";
 
     /**
-     * {@link TriviaService} instance with lazy getter.
+     * {@link IntentProcessingService} instance.
      */
-    @Getter(value = AccessLevel.PRIVATE, lazy = true)
-    private final TriviaService triviaService = new TriviaService(new QuestionService());
+    private final IntentProcessingService intentService;
 
     /**
      * {@link WebhookResponseFactory} instance.
      */
-    private final WebhookResponseFactory webhookResponseFactory = new WebhookResponseFactory();
+    private final WebhookResponseFactory webhookResponseFactory;
+
+    TriviaWebhookService(IntentProcessingService intentService) {
+        this.intentService = intentService;
+        webhookResponseFactory = new WebhookResponseFactory();
+    }
 
     /**
      * Converts {@link WebhookRequest} => {@link WebhookResponse}
@@ -72,7 +74,7 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
 
         log.debug("TriviaRequest: {}", triviaRequest);
 
-        val triviaResponse = getTriviaService()
+        val triviaResponse = intentService
                 .getFunctionByIntentName(intentName)
                 .apply(triviaRequest);
 

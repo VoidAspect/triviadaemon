@@ -4,6 +4,8 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.voidaspect.triviadaemon.handler.apiai.data.WebhookRequest;
 import com.voidaspect.triviadaemon.handler.apiai.data.WebhookResponse;
+import com.voidaspect.triviadaemon.service.QuestionService;
+import com.voidaspect.triviadaemon.service.TriviaService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -22,7 +24,7 @@ public final class TriviaWebhookRequestHandler implements RequestHandler<Webhook
      * @see TriviaWebhookService
      */
     private final Function<WebhookRequest, WebhookResponse> webhookFunction =
-            new TriviaWebhookService();
+            new TriviaWebhookService(new TriviaService(new QuestionService()));
 
     /**
      * {@inheritDoc}

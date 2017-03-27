@@ -8,8 +8,6 @@ import com.voidaspect.triviadaemon.dialog.ASKTitle;
 import com.voidaspect.triviadaemon.dialog.Phrase;
 import com.voidaspect.triviadaemon.service.*;
 import com.voidaspect.triviadaemon.service.data.*;
-import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -32,13 +30,16 @@ final class TriviaSpeechlet implements SpeechletV2 {
     /**
      * {@link SpeechletResponseFactory} instance.
      */
-    private final SpeechletResponseFactory responseFactory =
-            new SpeechletResponseFactory();
+    private final SpeechletResponseFactory responseFactory;
     /**
-     * {@link TriviaService} instance with lazy getter.
+     * {@link IntentProcessingService} instance.
      */
-    @Getter(value = AccessLevel.PRIVATE, lazy = true)
-    private final TriviaService triviaService = new TriviaService(new QuestionService());
+    private final IntentProcessingService intentService;
+
+    TriviaSpeechlet(IntentProcessingService intentService) {
+        this.intentService = intentService;
+        responseFactory = new SpeechletResponseFactory();
+    }
 
     /**
      * {@inheritDoc}
@@ -80,7 +81,7 @@ final class TriviaSpeechlet implements SpeechletV2 {
 
         log.debug("TriviaRequest: {}", triviaRequest);
 
-        val response = getTriviaService()
+        val response = intentService
                 .getFunctionByIntentName(intent.getName())
                 .apply(triviaRequest);
 
@@ -139,7 +140,7 @@ final class TriviaSpeechlet implements SpeechletV2 {
      * if needed, saves the recently generated question data into {@link Session}.
      *
      * @param session  dialog session
-     * @param response {@link #triviaService} response.
+     * @param response {@link #intentService} response.
      * @return {@link SpeechletResponse} object.
      */
     private SpeechletResponse createSpeechletResponse(Session session, TriviaResponse response) {

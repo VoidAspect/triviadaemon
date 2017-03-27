@@ -18,7 +18,7 @@ import static com.voidaspect.triviadaemon.service.data.TriviaRequestContext.Cont
 /**
  * @author mikhail.h
  */
-public final class TriviaService {
+public final class TriviaService implements IntentProcessingService {
 
     private final Map<TriviaIntent, Function<TriviaRequest, TriviaResponse>> intentMap;
 
@@ -31,7 +31,8 @@ public final class TriviaService {
         intentMap.put(ANSWER, request -> TriviaResponse.builder()
                 .isTerminal(false)
                 .title(ASKTitle.CORRECT_ANSWER.get())
-                .speech(getContextParam(request, CORRECT_ANSWER))
+                .speech(getContextParam(request, CORRECT_ANSWER)
+                        .orElseGet(NO_QUESTION))
                 .build());
 
         intentMap.put(GUESS, TriviaService::checkGuess);
@@ -44,8 +45,10 @@ public final class TriviaService {
 
         intentMap.put(REPEAT, request -> TriviaResponse.builder()
                 .isTerminal(false)
-                .speech(getContextParam(request, QUESTION_SPEECH))
-                .text(getContextParam(request, QUESTION_TEXT))
+                .speech(getContextParam(request, QUESTION_SPEECH)
+                        .orElseGet(NO_QUESTION))
+                .text(getContextParam(request, QUESTION_TEXT)
+                        .orElseGet(NO_QUESTION))
                 .title(ASKTitle.PREVIOUS_QUESTION.get())
                 .build());
 
@@ -59,16 +62,16 @@ public final class TriviaService {
 
     }
 
-    public Function<TriviaRequest, TriviaResponse> getFunctionByIntentName(String name) {
-        val intent = getByName(name);
+    @Override
+    public Function<TriviaRequest, TriviaResponse> getFunctionByIntentName(String intentName) {
+        val intent = getByName(intentName);
         return intentMap.get(intent);
     }
 
-    private static String
+    private static Optional<String>
     getContextParam(TriviaRequest request, TriviaRequestContext.ContextParam cp) {
         val param = request.getRequestContext().getContextParams().get(cp);
-        return Optional.ofNullable(param)
-                .orElseGet(NO_QUESTION);
+        return Optional.ofNullable(param);
     }
 
     private static TriviaResponse checkGuess(TriviaRequest request) {
