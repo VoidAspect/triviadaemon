@@ -6,10 +6,10 @@ import com.voidaspect.triviadaemon.service.data.TriviaResponse;
 import java.util.function.Function;
 
 /**
- * @author miwag.
+ * @author mikhail.h.
  */
 @FunctionalInterface
-public interface IntentProcessingService {
+public interface ServiceProducer {
 
     Function<TriviaRequest, TriviaResponse> getFunctionByIntentName(String intentName);
 

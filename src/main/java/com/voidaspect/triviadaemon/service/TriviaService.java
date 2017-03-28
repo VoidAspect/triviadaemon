@@ -8,7 +8,9 @@ import com.voidaspect.triviadaemon.service.data.TriviaRequestContext;
 import com.voidaspect.triviadaemon.service.data.TriviaResponse;
 import lombok.val;
 
-import java.util.*;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static com.voidaspect.triviadaemon.dialog.Phrase.*;
@@ -18,7 +20,7 @@ import static com.voidaspect.triviadaemon.service.data.TriviaRequestContext.Cont
 /**
  * @author mikhail.h
  */
-public final class TriviaService implements IntentProcessingService {
+public final class TriviaService implements ServiceProducer {
 
     private final Map<TriviaIntent, Function<TriviaRequest, TriviaResponse>> intentMap;
 
@@ -75,20 +77,19 @@ public final class TriviaService implements IntentProcessingService {
     }
 
     private static TriviaResponse checkGuess(TriviaRequest request) {
-        val userGuess = request.getGuessRequest();
         val correctAnswer = request.getRequestContext()
                 .getContextParams()
                 .get(CORRECT_ANSWER_PLAIN);
 
         final ASKTitle title;
         final Phrase speech;
-        if (correctAnswer == null || correctAnswer.isEmpty()) {
+        if (correctAnswer == null || correctAnswer.isEmpty()) { //if request doesn't supply context
             title = ASKTitle.NO_QUESTION_FOUND;
             speech = NO_QUESTION;
-        } else if (userGuess.test(correctAnswer)) {
+        } else if (request.getGuessRequest().matches(correctAnswer)) { //if user's input matches answer from context
             title = ASKTitle.CORRECT;
             speech = CORRECT_GUESS;
-        } else {
+        } else { //if user input doesn't match answer from context
             title = ASKTitle.INCORRECT;
             speech = INCORRECT_GUESS;
         }

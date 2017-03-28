@@ -31,12 +31,13 @@ final class TriviaSpeechlet implements SpeechletV2 {
      * {@link SpeechletResponseFactory} instance.
      */
     private final SpeechletResponseFactory responseFactory;
-    /**
-     * {@link IntentProcessingService} instance.
-     */
-    private final IntentProcessingService intentService;
 
-    TriviaSpeechlet(IntentProcessingService intentService) {
+    /**
+     * {@link ServiceProducer} instance.
+     */
+    private final ServiceProducer intentService;
+
+    TriviaSpeechlet(ServiceProducer intentService) {
         this.intentService = intentService;
         responseFactory = new SpeechletResponseFactory();
     }

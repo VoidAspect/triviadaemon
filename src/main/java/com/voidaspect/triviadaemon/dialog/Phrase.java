@@ -86,6 +86,7 @@ public enum Phrase implements Supplier<String> {
      *
      * @return phrase string
      */
+    @Override
     public String get() {
         return textSnippets[new Random().nextInt(textSnippets.length)];
     }

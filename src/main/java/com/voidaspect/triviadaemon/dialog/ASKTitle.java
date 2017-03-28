@@ -34,6 +34,7 @@ public enum ASKTitle implements Supplier<String> {
 
     private final String text;
 
+    @Override
     public String get() {
         return text;
     }

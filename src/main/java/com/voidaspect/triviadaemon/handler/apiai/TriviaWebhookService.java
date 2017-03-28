@@ -37,16 +37,16 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
     private static final String RECENT_QUESTION_CONTEXT_NAME = "recent-question";
 
     /**
-     * {@link IntentProcessingService} instance.
+     * {@link ServiceProducer} instance.
      */
-    private final IntentProcessingService intentService;
+    private final ServiceProducer intentService;
 
     /**
      * {@link WebhookResponseFactory} instance.
      */
     private final WebhookResponseFactory webhookResponseFactory;
 
-    TriviaWebhookService(IntentProcessingService intentService) {
+    TriviaWebhookService(ServiceProducer intentService) {
         this.intentService = intentService;
         webhookResponseFactory = new WebhookResponseFactory();
     }

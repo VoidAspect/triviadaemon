@@ -5,14 +5,13 @@ import lombok.ToString;
 
 import java.util.Collections;
 import java.util.Set;
-import java.util.function.Predicate;
 
 /**
  * @author mikhail.h
  */
 @EqualsAndHashCode
 @ToString
-public final class GuessRequest implements Predicate<String> {
+public final class GuessRequest {
 
     private final Set<String> userInput;
 
@@ -20,8 +19,7 @@ public final class GuessRequest implements Predicate<String> {
         this.userInput = Collections.unmodifiableSet(userInput);
     }
 
-    @Override
-    public boolean test(String s) {
+    public boolean matches(String s) {
         return userInput.stream()
                 .anyMatch(input -> input.equalsIgnoreCase(s));
     }
