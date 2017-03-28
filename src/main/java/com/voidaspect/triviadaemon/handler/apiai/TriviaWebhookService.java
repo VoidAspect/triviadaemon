@@ -12,6 +12,7 @@ import lombok.val;
 import java.util.*;
 import java.util.function.Function;
 
+import static com.voidaspect.triviadaemon.handler.apiai.ApiAiParam.*;
 import static com.voidaspect.triviadaemon.service.data.TriviaRequestContext.ContextParam.*;
 
 /**
@@ -35,6 +36,11 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
      * Name of the {@link RequestContext} with information about current quiz.
      */
     private static final String RECENT_QUESTION_CONTEXT_NAME = "recent-question";
+
+    /**
+     * Lifespan of an output context
+     */
+    private static final int CONTEXT_LIFESPAN = 5;
 
     /**
      * {@link ServiceProducer} instance.
@@ -95,8 +101,8 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
                 .orElseGet(Collections::emptySet)
                 .stream()
                 .filter(context -> context.getName().equals(RECENT_QUESTION_CONTEXT_NAME))
-                .findAny()
                 .map(RequestContext::getParameters)
+                .findAny()
                 .ifPresent(params -> {
                     contextParams.put(CORRECT_ANSWER, params.get(CORRECT_ANSWER.name()));
                     contextParams.put(CORRECT_ANSWER_PLAIN, params.get(CORRECT_ANSWER_PLAIN.name()));
@@ -107,17 +113,17 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
         val questionRequestBuilder = QuestionRequest.builder();
 
         val parameters = Optional.ofNullable(requestData.getParameters());
-        parameters.map(params -> params.get(ApiAiParam.DIFFICULTY.getParamName()))
+        parameters.map(params -> params.get(DIFFICULTY.getParamName()))
                 .flatMap(Difficulty::getByName)
                 .ifPresent(questionRequestBuilder::difficulty);
-        parameters.map(params -> params.get(ApiAiParam.TYPE.getParamName()))
+        parameters.map(params -> params.get(TYPE.getParamName()))
                 .flatMap(QuestionType::getByDescription)
                 .ifPresent(questionRequestBuilder::type);
 
         Set<String> userInput = new HashSet<>();
-        parameters.map(params -> params.get(ApiAiParam.BOOLEAN.getParamName()))
+        parameters.map(params -> params.get(BOOLEAN.getParamName()))
                 .ifPresent(userInput::add);
-        parameters.map(params -> params.get(ApiAiParam.NUMBER.getParamName()))
+        parameters.map(params -> params.get(NUMBER.getParamName()))
                 .ifPresent(userInput::add);
 
         return TriviaRequest.builder()
@@ -149,7 +155,7 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
             RequestContext contextOut = new RequestContext();
             contextOut.setName(RECENT_QUESTION_CONTEXT_NAME);
             contextOut.setParameters(contextOutParams);
-            contextOut.setLifespan(5);
+            contextOut.setLifespan(CONTEXT_LIFESPAN);
 
             requestContexts = Collections.singleton(contextOut);
         } else {

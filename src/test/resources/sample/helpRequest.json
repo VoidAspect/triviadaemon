@@ -1,0 +1,24 @@
+{
+  "session": {
+    "sessionId": "SessionId.4d891046-ee35-44de-b1f1-8c50442f1cdc",
+    "application": {
+      "applicationId": "amzn1.ask.skill.cc26625b-8c97-415d-a0ef-2c52365c9e71"
+    },
+    "attributes": {},
+    "user": {
+      "userId": "amzn1.ask.account.AH5UAORJVMZGYLTXH27MR7X2CLO6M432DBQASBCBEV4T2RZAK3EEP32PXHCHY3QWBPQ2VM3IEK5P5TKFRURFXWVHQUSXGHBNTX4WVPYVG3DOTK47UJU3NHYERLNAOYB5JJZ5LK63JGDF4NLELBUDSFSVJVBLZ7RGCPONVNQ674L5WAKAUJJVQCOW5S5KWLSCBK3J3JQK7MJ7TGA"
+    },
+    "new": true
+  },
+  "request": {
+    "type": "IntentRequest",
+    "requestId": "EdwRequestId.75de90dd-3821-4620-93f2-6c596bda14be",
+    "locale": "en-US",
+    "timestamp": "2017-03-28T16:03:35Z",
+    "intent": {
+      "name": "AMAZON.HelpIntent",
+      "slots": {}
+    }
+  },
+  "version": "1.0"
+}

@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "response": {
+    "outputSpeech": {
+      "type": "PlainText",
+      "text": "You can ask me to generate a question. For example, say: Give me an easy question with multiple choice."
+    },
+    "card": {
+      "content": "You can ask me to generate a question. For example, say: Give me an easy question with multiple choice.",
+      "title": "Help",
+      "type": "Simple"
+    },
+    "shouldEndSession": true
+  },
+  "sessionAttributes": {}
+}

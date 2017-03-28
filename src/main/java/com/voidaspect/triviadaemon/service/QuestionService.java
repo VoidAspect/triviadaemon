@@ -119,7 +119,7 @@ public final class QuestionService implements Function<QuestionRequest, TriviaRe
                         (answerList.indexOf(choice) + 1) + ": " + choice);
 
                 speech = question + answerList.stream()
-                        .collect(Collectors.joining(", ", " ", "."));
+                        .collect(Collectors.joining(";\n", "\n", "."));
 
                 text = info + question + answerList.stream()
                         .collect(Collectors.joining("\n", "\n", ""));
