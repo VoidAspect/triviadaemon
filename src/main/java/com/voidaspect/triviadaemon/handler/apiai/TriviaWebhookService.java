@@ -105,17 +105,19 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
                 });
 
         val questionRequestBuilder = QuestionRequest.builder();
-        getRequestParam(requestData, ApiAiParam.DIFFICULTY)
+
+        val parameters = Optional.ofNullable(requestData.getParameters());
+        parameters.map(params -> params.get(ApiAiParam.DIFFICULTY.getParamName()))
                 .flatMap(Difficulty::getByName)
                 .ifPresent(questionRequestBuilder::difficulty);
-        getRequestParam(requestData, ApiAiParam.TYPE)
+        parameters.map(params -> params.get(ApiAiParam.TYPE.getParamName()))
                 .flatMap(QuestionType::getByDescription)
                 .ifPresent(questionRequestBuilder::type);
 
         Set<String> userInput = new HashSet<>();
-        getRequestParam(requestData, ApiAiParam.BOOLEAN)
+        parameters.map(params -> params.get(ApiAiParam.BOOLEAN.getParamName()))
                 .ifPresent(userInput::add);
-        getRequestParam(requestData, ApiAiParam.NUMBER)
+        parameters.map(params -> params.get(ApiAiParam.NUMBER.getParamName()))
                 .ifPresent(userInput::add);
 
         return TriviaRequest.builder()
@@ -157,15 +159,4 @@ final class TriviaWebhookService implements Function<WebhookRequest, WebhookResp
         return webhookResponseFactory.newWebhookResponse(speech, text, requestContexts);
     }
 
-    /**
-     * Utility method for null-safe retrieval of request parameters.
-     *
-     * @param requestData dto with request data.
-     * @param param       parameter to retrieve.
-     * @return optional-wrapped parameter value.
-     */
-    private Optional<String> getRequestParam(IncompleteResult requestData, ApiAiParam param) {
-        return Optional.ofNullable(requestData.getParameters())
-                .map(params -> params.get(param.getParamName()));
-    }
 }
