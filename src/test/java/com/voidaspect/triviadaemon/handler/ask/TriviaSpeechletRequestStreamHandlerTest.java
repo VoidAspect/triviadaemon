@@ -37,8 +37,10 @@ public class TriviaSpeechletRequestStreamHandlerTest {
         compareResponse("/sample/helpRequest.json", "/sample/helpResponse.json");
     }
 
-
-
+    @Test
+    public void testLaunchIntent() throws Exception {
+        compareResponse("/sample/launchRequest.json", "/sample/launchResponse.json");
+    }
 
     private void compareResponse(String requestUrl, String responseUrl) throws IOException, URISyntaxException {
         val thisClass = getClass();
