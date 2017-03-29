@@ -5,12 +5,18 @@
       "type": "PlainText",
       "text": "You can ask me to generate a question. For example, say: Give me an easy question with multiple choice."
     },
-    "card": {
-      "content": "You can ask me to generate a question. For example, say: Give me an easy question with multiple choice.",
-      "title": "Help",
-      "type": "Simple"
+    "reprompt": {
+      "outputSpeech": {
+        "type":"PlainText",
+        "text":"What else can I help you with?"
+      }
     },
-    "shouldEndSession": true
+    "card": {
+      "type": "Simple",
+      "title": "Help",
+      "content": "You can ask me to generate a question. For example, say: Give me an easy question with multiple choice."
+    },
+    "shouldEndSession": false
   },
   "sessionAttributes": {}
 }

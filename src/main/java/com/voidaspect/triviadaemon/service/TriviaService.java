@@ -40,7 +40,7 @@ public final class TriviaService implements ServiceProducer {
         intentMap.put(GUESS, TriviaService::checkGuess);
 
         intentMap.put(HELP, request -> TriviaResponse.builder()
-                .isTerminal(true)
+                .isTerminal(false)
                 .title(ASKTitle.HELP.get())
                 .speech(HELP_MESSAGE.get())
                 .build());
