@@ -80,21 +80,24 @@ public final class TriviaService implements ServiceProducer {
         val correctAnswer = request.getRequestContext()
                 .getContextParams()
                 .get(CORRECT_ANSWER_PLAIN);
-
         final ASKTitle title;
         final Phrase speech;
+        final boolean isCorrect;
         if (correctAnswer == null || correctAnswer.isEmpty()) { //if request doesn't supply context
             title = ASKTitle.NO_QUESTION_FOUND;
             speech = NO_QUESTION;
+            isCorrect = false;
         } else if (request.getGuessRequest().matches(correctAnswer)) { //if user's input matches answer from context
             title = ASKTitle.CORRECT;
             speech = CORRECT_GUESS;
+            isCorrect = true;
         } else { //if user input doesn't match answer from context
             title = ASKTitle.INCORRECT;
             speech = INCORRECT_GUESS;
+            isCorrect = false;
         }
         return TriviaResponse.builder()
-                .isTerminal(false)
+                .isTerminal(isCorrect)
                 .title(title.get())
                 .speech(speech.get())
                 .build();

@@ -148,14 +148,6 @@ final class TriviaSpeechlet implements SpeechletV2 {
         val text = response.getText();
         val speech = response.getSpeech();
 
-        val correctAnswer = response.getCorrectAnswer();
-        if (correctAnswer != null) {
-            session.setAttribute(CORRECT_ANSWER.name(), correctAnswer.getAnswerDescription());
-            session.setAttribute(CORRECT_ANSWER_PLAIN.name(), correctAnswer.getAnswerPlain());
-            session.setAttribute(QUESTION_SPEECH.name(), speech);
-            session.setAttribute(QUESTION_TEXT.name(), text);
-        }
-
         val title = response.getTitle();
 
         final SpeechletResponse speechletResponse;
@@ -163,6 +155,13 @@ final class TriviaSpeechlet implements SpeechletV2 {
             speechletResponse = responseFactory
                     .newTellResponse(speech, text, title);
         } else {
+            val correctAnswer = response.getCorrectAnswer();
+            if (correctAnswer != null) {
+                session.setAttribute(CORRECT_ANSWER.name(), correctAnswer.getAnswerDescription());
+                session.setAttribute(CORRECT_ANSWER_PLAIN.name(), correctAnswer.getAnswerPlain());
+                session.setAttribute(QUESTION_SPEECH.name(), speech);
+                session.setAttribute(QUESTION_TEXT.name(), text);
+            }
             speechletResponse = responseFactory
                     .newAskResponse(speech, Phrase.REPROMPT.get(), text, title);
         }
